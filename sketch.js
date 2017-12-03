@@ -11,6 +11,7 @@ var fallSpeed = 0.05;
 var falling = false;
 var worldEnd = -1 * 125 * 1.73205080757;
 var coins = [];
+var Ramps = [];
 var collectSound;
 var section = 0;
 
@@ -48,16 +49,11 @@ function setup() {
 	// add the plane to our world
 	world.add(g);
 
-	var test = new Plane({
-		x:0, y: 125 * -1, z:worldEnd,
-		width: 100, height: 500,
-		asset: 'snow',
-		repeatX: 100,
-		repeatY: 500,
-		rotationX: -90
-	});
+	var test = new Ramp(
+		0, 125 * -1, worldEnd
+	);
 
-	world.add(test);
+	Ramps.push(test);
 }
 
 function draw() {
@@ -160,6 +156,29 @@ function Coin(x, y, z){
 	}
 }
 
+function Ramp(x, y, z){
+    this.b = new Box({
+        x:x, y: y, z:z,
+        width: 60, height: 50, depth: 2,
+        asset: 'snow',
+        repeatX: 100,
+        repeatY: 500,
+        rotationX: -60
+    });
+
+    world.add(this.b);
+    
+    this.checkHit = function(){
+        var pos = world.getUserPosition();
+        if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
+            world.remove(this.t);
+            return true;
+        }
+    }
+}
+
+
+
 function addObjects(limit, start, tilt){
 	var textures = ['iron', 'stone', 'gold'];
 	// create lots of boxes
@@ -170,7 +189,7 @@ function addObjects(limit, start, tilt){
 		var y;
 
 		if (tilt == 1){
-			y = (125 * (section + 1) * -1) + 2;
+			y = (125 * (section) * -1);
 		}
 
 		else{
