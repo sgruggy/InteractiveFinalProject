@@ -4,7 +4,7 @@ var userX = 0;
 var userY = 0.2;
 var userZ = 0;
 var xSpeed = 0.002;
-var zSpeed = 1;
+var zSpeed = 0.1;
 var slope = 0.5773;
 var sliding = false;
 var fallSpeed = 0.05;
@@ -63,6 +63,12 @@ function draw() {
 		if(coins[i].checkHit()){
 			coins.splice(i, 1);
 			collectSound.play();
+		}
+	}
+
+	for (var i = 0 ; i < Ramps.length; i++){
+		if (Ramps[i].checkHit()){
+			Ramps.splice(i, 1);
 		}
 	}
 
@@ -157,6 +163,10 @@ function Coin(x, y, z){
 }
 
 function Ramp(x, y, z){
+	this.x = x;
+	this.y = y;
+	this.z = z;
+
     this.b = new Box({
         x:x, y: y, z:z,
         width: 60, height: 50, depth: 2,
@@ -167,11 +177,12 @@ function Ramp(x, y, z){
     });
 
     world.add(this.b);
-    
+
     this.checkHit = function(){
         var pos = world.getUserPosition();
-        if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
-            world.remove(this.t);
+        if (this.x - pos.x <= 30 && Math.abs(this.z - pos.z) <= 1){
+        	console.log(this.z - pos.z);
+            world.remove(this.b);
             return true;
         }
     }
