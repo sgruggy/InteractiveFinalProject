@@ -72,8 +72,9 @@ function setup() {
 	world.add(g2);
 
 	var test = new Ramp(
-		0, 125 * -1, worldEnd
+		0, 125 * -1, worldEnd - 2
 	);
+
 
 	Ramps.push(test);
 }
