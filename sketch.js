@@ -18,6 +18,9 @@ var ground = [];
 var collectSound;
 var section = 0;
 var rampHit = false;
+var score = 0;
+var bonus = 0;
+var hits = 0;
 
 function preload(){
 	collectSound = loadSound("collect.mp3");
@@ -76,12 +79,16 @@ function setup() {
 }
 
 function draw() {
+	document.getElementById("score").innerHTML = "Score: " + (score + bonus);
+	document.getElementById("hits").innerHTML = "Hits: " + hits;
+
 	// always move the player forward a little bit - their movement vector
 	// is determined based on what they are looking at
 	for (var i = 0; i < coins.length; i++){
 		if(coins[i].checkHit()){
 			coins.splice(i, 1);
 			i--;
+			bonus += 50;
 			collectSound.play();
 		}
 	}
@@ -94,6 +101,7 @@ function draw() {
 		if (Obstacles[i].checkHit()){
 			Obstacles.splice(i, 1);
 			i--;
+			hits++;
 		}
 	}
 
@@ -124,6 +132,7 @@ function draw() {
 	}
 
 	userZ = pos.z - zSpeed ;
+	score = int(-userZ * 3);
 	world.setUserPosition(userX, userY, userZ);
 
 	// world.moveUserForward(0.01);
