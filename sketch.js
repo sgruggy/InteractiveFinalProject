@@ -6,12 +6,14 @@ var userZ = 0;
 var xSpeed = 0.002;
 var zSpeed = 0.1;
 var slope = 0.5773;
+var ySpeed = zSpeed * slope;
 var sliding = false;
 var fallSpeed = 0.05;
 var falling = false;
 var worldEnd = -1 * 125 * 1.73205080757;
 var coins = [];
 var Ramps = [];
+var Obstacles = [];
 var collectSound;
 var section = 0;
 
@@ -43,7 +45,7 @@ function setup() {
 						asset: 'snow',
 						repeatX: 100,
 						repeatY: 500,
-						rotationX:-120, metalness:0.25
+						rotationX:-120
 					   });
 
 	// add the plane to our world
@@ -72,6 +74,11 @@ function draw() {
 		}
 	}
 
+	for (var i = 0; i < Obstacles.length; i++){
+		if (Obstacles[i].checkHit()){
+			Obstacles.splice(i, 1);
+		}
+	}
 	if(!sliding){
 		var xRotation = world.getUserRotation().y;
 		var xMove = xSpeed * xRotation;
@@ -79,6 +86,7 @@ function draw() {
 		userX = pos.x - xMove;
 
 		var ground = pos.z * slope;
+		ySpeed = zSpeed * slope;
 
 		if(falling){
 			userY = (pos.y - zSpeed * slope) - fallSpeed;
@@ -93,7 +101,7 @@ function draw() {
 
 		else{
 			if (section % 2 == 0){
-				userY = pos.y - zSpeed * slope;
+				userY = pos.y - ySpeed;
 			}
 		}
 
@@ -121,7 +129,7 @@ function draw() {
 	else{
 		var pos = world.getUserPosition();
 	}
-	// zSpeed += 0.001;
+	zSpeed += 0.001;
 
 	// world.moveUserForward(0.01);
 	// console.log(xRotation);
@@ -188,6 +196,87 @@ function Ramp(x, y, z){
     }
 }
 
+function Obstacle(x, y, z, texture) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+
+    var selection = int(random(4));
+    var scale = random(1) + 1.5;
+
+    this.b = null;
+
+    switch (selection){
+        case 0:
+            // create a box here
+            this.b = new Box({
+                x:x,
+                y:y,
+                z:z,
+                asset:texture,
+                scaleX: scale,
+                scaleY: scale,
+                scaleZ: scale
+            });
+            // add the box to the world
+            world.add(this.b);
+            break;
+
+        case 1:
+            this.b = new Cone({
+                x:x,
+                y:y,
+                z:z,
+                asset:texture,
+                scaleX: scale,
+                scaleY: scale,
+                scaleZ: scale,
+                radiusTop: 0,
+                radiusBottom: 1
+            });
+
+            world.add(this.b);
+            break;
+
+        case 2:
+            this.b = new Dodecahedron({
+                x:x,
+                y:y,
+                z:z,
+                asset:texture,
+                scaleX: scale,
+                scaleY: scale,
+                scaleZ: scale
+            });
+
+            world.add(this.b);
+            break;
+
+        case 3:
+            this.b = new Sphere({
+                x:x,
+                y:y,
+                z:z,
+                asset:texture,
+                scaleX: scale,
+                scaleY: scale,
+                scaleZ: scale
+            });
+
+            world.add(this.b);
+            break;
+    }
+
+    this.checkHit = function(){
+        var pos = world.getUserPosition();
+        if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
+            console.log(this.z - pos.z);
+            world.remove(this.b);
+            zSpeed = 0.02;
+            return true;
+        }
+    }
+}
 
 
 function addObjects(limit, start, tilt){
@@ -210,93 +299,8 @@ function addObjects(limit, start, tilt){
 		// pick a random texture
 		var t = textures[ int(random(textures.length-1)) ];
 
-		var selection = int(random(5));
-		var scale = random(1) + 1.5;
-
-		switch (selection){
-			case 0:
-			// create a box here
-			var b = new Box({
-							x:x,
-							y:y,
-							z:z,
-							asset:t,
-							scaleX: scale,
-							scaleY: scale,
-							scaleZ: scale
-						});
-			// add the box to the world
-			world.add(b);
-			break;
-
-			case 1:
-			var c = new Cone({
-				x:x,
-				y:y,
-				z:z,
-				asset:t,
-				scaleX: scale,
-				scaleY: scale,
-				scaleZ: scale,
-				radiusTop: 0,
-				radiusBottom: 1
-			});
-
-			world.add(c);
-			break;
-
-			case 2:
-			var d = new Dodecahedron({
-				x:x,
-				y:y,
-				z:z,
-				asset:t,
-				scaleX: scale,
-				scaleY: scale,
-				scaleZ: scale
-			});
-
-			world.add(d);
-			break;
-
-			case 3:
-			var s = new Sphere({
-				x:x,
-				y:y,
-				z:z,
-				asset:t,
-				scaleX: scale,
-				scaleY: scale,
-				scaleZ: scale
-			});
-
-			world.add(s);
-			break;
-
-			case 4:
-			var c = new Container3D({
-				x:x,
-				y:y,
-				z:z,
-			});
-
-			for (var j = 0; j < 3; j++){
-				var cylinder = new Cylinder({
-					x:x + (-3 + j * 3),
-					y:y,
-					z:z,
-					asset:t,
-					scaleX: scale,
-					scaleY: scale,
-					scaleZ: scale
-				});
-
-				c.addChild(cylinder);
-			}
-
-			world.add(c)
-			break;
-		}
+		var obstacle = new Obstacle(x, y, z, t);
+		Obstacles.push(obstacle);
 
 		x = random(-50, 50);
 		z = random(limit, start);
