@@ -79,6 +79,7 @@ function draw() {
 			Obstacles.splice(i, 1);
 		}
 	}
+
 	if(!sliding){
 		var xRotation = world.getUserRotation().y;
 		var xMove = xSpeed * xRotation;
@@ -87,6 +88,7 @@ function draw() {
 
 		var ground = pos.z * slope;
 		ySpeed = zSpeed * slope;
+		xSpeed = zSpeed / 50;
 
 		if(falling){
 			userY = (pos.y - zSpeed * slope) - fallSpeed;
@@ -124,12 +126,12 @@ function draw() {
 			}
 
 		}
-	}
+        zSpeed += 0.001;
+    }
 
 	else{
 		var pos = world.getUserPosition();
 	}
-	zSpeed += 0.001;
 
 	// world.moveUserForward(0.01);
 	// console.log(xRotation);
