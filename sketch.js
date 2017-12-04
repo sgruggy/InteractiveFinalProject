@@ -100,7 +100,8 @@ function draw() {
 	var xRotation = world.getUserRotation().y;
 	var xMove = xSpeed * xRotation;
 	var pos = world.getUserPosition();
-	console.log(ground[Math.floor(pos.z * -1)]);
+
+	var currentGround = ground[Math.floor(pos.z * -1)];
 	userX = pos.x - xMove;
 
 	if (rampHit) {
@@ -118,9 +119,19 @@ function draw() {
 	}
 
 	else{
-		userY = pos.y - ySpeed;
-		ySpeed += fallSpeed;
-		fallSpeed += 0.000001;
+		if (currentGround == 'plane'){
+			userY = pos.y - ySpeed;
+		}
+
+		else if (currentGround == 'ramp'){
+			userY = pos.y + ySpeed;
+		}
+
+		else{
+            userY = pos.y - ySpeed;
+            ySpeed += fallSpeed;
+            fallSpeed += 0.000001;
+		}
 	}
 
 	userZ = pos.z - zSpeed ;
@@ -190,8 +201,6 @@ function Ramp(x, y, z){
         if(!rampHit){
             if (this.x - pos.x <= 30 && Math.abs(this.z - pos.z) <= 1){
                 rampHit = true;
-                ySpeed = ySpeed * -1;
-                console.log(ySpeed);
                 return true;
             }
 		}
