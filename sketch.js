@@ -8,14 +8,16 @@ var zSpeed = 0.1;
 var slope = 0.5773;
 var ySpeed = zSpeed * slope;
 var sliding = false;
-var fallSpeed = 0.05;
+var fallSpeed = 0.000001;
 var falling = false;
 var worldEnd = -1 * 125 * 1.73205080757;
 var coins = [];
 var Ramps = [];
 var Obstacles = [];
+var ground = [];
 var collectSound;
 var section = 0;
+var rampHit = false;
 
 function preload(){
 	collectSound = loadSound("collect.mp3");
@@ -51,6 +53,21 @@ function setup() {
 	// add the plane to our world
 	world.add(g);
 
+	for (var i = 0; i <= Math.floor(125 * 1.73205080757); i++){
+		ground.push('plane');
+	}
+
+	var g2 =  new Plane({
+        x:0, y:-300, z:-800,
+        width:100, height:500,
+        asset: 'snow',
+        repeatX: 100,
+        repeatY: 500,
+        rotationX:-90
+	});
+
+	world.add(g2);
+
 	var test = new Ramp(
 		0, 125 * -1, worldEnd
 	);
@@ -64,74 +81,50 @@ function draw() {
 	for (var i = 0; i < coins.length; i++){
 		if(coins[i].checkHit()){
 			coins.splice(i, 1);
+			i--;
 			collectSound.play();
 		}
 	}
 
-	for (var i = 0 ; i < Ramps.length; i++){
-		if (Ramps[i].checkHit()){
-			Ramps.splice(i, 1);
-		}
+	for (var i = 0; i < Ramps.length; i++){
+		Ramps[i].checkHit();
 	}
 
 	for (var i = 0; i < Obstacles.length; i++){
 		if (Obstacles[i].checkHit()){
 			Obstacles.splice(i, 1);
+			i--;
 		}
 	}
 
-	if(!sliding){
-		var xRotation = world.getUserRotation().y;
-		var xMove = xSpeed * xRotation;
-		var pos = world.getUserPosition();
-		userX = pos.x - xMove;
+	var xRotation = world.getUserRotation().y;
+	var xMove = xSpeed * xRotation;
+	var pos = world.getUserPosition();
+	console.log(ground[Math.floor(pos.z * -1)]);
+	userX = pos.x - xMove;
 
-		var ground = pos.z * slope;
-		ySpeed = zSpeed * slope;
-		xSpeed = zSpeed / 50;
-
-		if(falling){
-			userY = (pos.y - zSpeed * slope) - fallSpeed;
-			fallSpeed += 0.01;
-
-			if (userY <= ground){
-				userY = ground + 0.5;
-				falling = false;
-				fallSpeed = 0.05;
-			}
-		}
-
-		else{
-			if (section % 2 == 0){
-				userY = pos.y - ySpeed;
-			}
-		}
-
-		userZ = pos.z - zSpeed ;
-		world.setUserPosition(userX, userY, userZ);
-
-		if (pos.z < worldEnd){
-			var temp = worldEnd;
-			worldEnd += worldEnd;
-			console.log("zPox: " + pos.z + " worldEnd: " + worldEnd);
-			section += 1;
-
-			if (section % 2 != 0){
-				addObjects(worldEnd, temp, 1);
-				console.log("Change slope");
-			}
-
-			else{
-				addObjects(worldEnd, temp, slope);
-			}
-
-		}
-        zSpeed += 0.001;
+	if (rampHit) {
     }
 
-	else{
-		var pos = world.getUserPosition();
+    else{
+        ySpeed = zSpeed * slope;
+        zSpeed += 0.001;
+    }
+	xSpeed = zSpeed / 50;
+
+	if(falling){
+		userY = (pos.y - zSpeed * slope) - fallSpeed;
+		fallSpeed += 0.01;
 	}
+
+	else{
+		userY = pos.y - ySpeed;
+		ySpeed += fallSpeed;
+		fallSpeed += 0.000001;
+	}
+
+	userZ = pos.z - zSpeed ;
+	world.setUserPosition(userX, userY, userZ);
 
 	// world.moveUserForward(0.01);
 	// console.log(xRotation);
@@ -188,13 +181,20 @@ function Ramp(x, y, z){
 
     world.add(this.b);
 
+    for (var i = 0; i <= Math.floor(25 * 1.73205080757); i++){
+    	ground.push('ramp');
+	}
+
     this.checkHit = function(){
         var pos = world.getUserPosition();
-        if (this.x - pos.x <= 30 && Math.abs(this.z - pos.z) <= 1){
-        	console.log(this.z - pos.z);
-            world.remove(this.b);
-            return true;
-        }
+        if(!rampHit){
+            if (this.x - pos.x <= 30 && Math.abs(this.z - pos.z) <= 1){
+                rampHit = true;
+                ySpeed = ySpeed * -1;
+                console.log(ySpeed);
+                return true;
+            }
+		}
     }
 }
 
