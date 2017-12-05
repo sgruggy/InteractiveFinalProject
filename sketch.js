@@ -15,6 +15,7 @@ var coins = [];
 var Ramps = [];
 var Obstacles = [];
 var ground = [];
+var groundMap = [];
 var collectSound;
 var section = 0;
 var rampHit = false;
@@ -24,6 +25,16 @@ var hits = 0;
 
 function preload(){
 	collectSound = loadSound("collect.mp3");
+    for (var i = 0; i <= Math.floor(125 * 1.73205080757); i++){
+        ground.push('plane');
+        groundMap[i] = i * slope * -1;
+    }
+
+    for(var i = 650; i < 1050; i++){
+        ground[i] = 'plane';
+        groundMap[i] = i * slope * -1;
+    }
+
 }
 
 function setup() {
@@ -56,10 +67,6 @@ function setup() {
 	// add the plane to our world
 	world.add(g);
 
-	for (var i = 0; i <= Math.floor(125 * 1.73205080757); i++){
-		ground.push('plane');
-	}
-
 	var g2 =  new Plane({
         x:0, y:-300, z:-800,
         width:100, height:500,
@@ -70,11 +77,9 @@ function setup() {
 	});
 
 	world.add(g2);
-
 	var test = new Ramp(
 		0, 125 * -1, worldEnd - 2
 	);
-
 
 	Ramps.push(test);
 }
@@ -111,9 +116,14 @@ function draw() {
 	var pos = world.getUserPosition();
 
 	var currentGround = ground[Math.floor(pos.z * -1)];
+	// console.log(groundMap[Math.floor(pos.z * -1)]);
 	userX = pos.x - xMove;
 
 	if (rampHit) {
+		console.log(currentGround);
+		if(currentGround === 'plane'){
+			rampHit = false;
+		}
     }
 
     else{
@@ -132,14 +142,12 @@ function draw() {
 			userY = pos.y - ySpeed;
 		}
 
-		else if (currentGround == 'ramp'){
-			userY = pos.y + ySpeed;
-		}
-
 		else{
-            userY = pos.y - ySpeed;
-            ySpeed += fallSpeed;
-            fallSpeed += 0.000001;
+            userY = pos.y + ySpeed;
+            if(currentGround === undefined){
+                ySpeed -= fallSpeed;
+                fallSpeed += 0.000005;
+			}
 		}
 	}
 
