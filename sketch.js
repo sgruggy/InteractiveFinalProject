@@ -30,11 +30,6 @@ function preload(){
         groundMap[i] = i * slope * -1;
     }
 
-    for(var i = 650; i < 1050; i++){
-        ground[i] = 'plane';
-        groundMap[i] = i * slope * -1;
-    }
-
 }
 
 function setup() {
@@ -81,6 +76,11 @@ function setup() {
 		0, 125 * -1, worldEnd - 2
 	);
 
+    for(var i = 550; i < 1050; i++){
+        ground[i] = 'plane';
+        groundMap[i] = -300;
+    }
+
 	Ramps.push(test);
 }
 
@@ -116,11 +116,10 @@ function draw() {
 	var pos = world.getUserPosition();
 
 	var currentGround = ground[Math.floor(pos.z * -1)];
-	// console.log(groundMap[Math.floor(pos.z * -1)]);
+	console.log(currentGround);
 	userX = pos.x - xMove;
 
 	if (rampHit) {
-		console.log(currentGround);
 		if(currentGround === 'plane'){
 			rampHit = false;
 		}
@@ -138,16 +137,22 @@ function draw() {
 	}
 
 	else{
-		if (currentGround == 'plane'){
-			userY = pos.y - ySpeed;
+		if (currentGround === 'plane'){
+            if (pos.y - ySpeed > groundMap[Math.floor(pos.z * -1)] + 0.5){
+                userY = pos.y - ySpeed;
+            }
+
+            else if (pos.y - ySpeed < groundMap[Math.floor(pos.z* -1)] + 0.5){
+            	userY = groundMap[Math.floor(pos.z* -1)] + 0.5
+			}
 		}
 
 		else{
             userY = pos.y + ySpeed;
-            if(currentGround === undefined){
-                ySpeed -= fallSpeed;
-                fallSpeed += 0.000005;
-			}
+            	if (pos.y > groundMap[Math.floor(pos.z * -1)] + 0.5 || currentGround === undefined){
+                    ySpeed -= fallSpeed;
+                    fallSpeed += 0.00001;
+				}
 		}
 	}
 
@@ -210,8 +215,14 @@ function Ramp(x, y, z){
 
     world.add(this.b);
 
-    for (var i = 0; i <= Math.floor(25 * 1.73205080757); i++){
+    var start = ground.length;
+    var limit = ground.length + Math.floor(25 * 1.73205080757);
+
+    console.log("RAMP START: " + start + " LIMIT: " + limit);
+
+    for (var i = start; i <= limit; i++){
     	ground.push('ramp');
+    	groundMap[i] =  i * slope;
 	}
 
     this.checkHit = function(){
