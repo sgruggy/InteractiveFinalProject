@@ -6,6 +6,7 @@ var userZ = 0;
 var xSpeed = 0.002;
 var zSpeed = 0.1;
 var slope = 0.5773;
+var radicalThree = 1.73205080757;
 var ySpeed = zSpeed * slope;
 var sliding = false;
 var fallSpeed = 0.000001;
@@ -22,6 +23,9 @@ var rampHit = false;
 var score = 0;
 var bonus = 0;
 var hits = 0;
+var testGround;
+var testMap = new GroundMap();
+var groundPointer;
 
 function preload(){
 	collectSound = loadSound("collect.mp3");
@@ -50,31 +54,48 @@ function setup() {
 
 
 	// create a plane to serve as our "ground"
-	var g = new Plane({
-						x:0, y:0, z:0,
-						width:100, height:500,
-						asset: 'snow',
-						repeatX: 100,
-						repeatY: 500,
-						rotationX:-120
-					   });
+	// var g = new Plane({
+	// 					x:0, y:0, z:0,
+	// 					width:100, height:500,
+	// 					asset: 'snow',
+	// 					repeatX: 100,
+	// 					repeatY: 500,
+	// 					rotationX:-120
+	// 				   });
+    //
+	// // add the plane to our world
+	// world.add(g);
 
-	// add the plane to our world
-	world.add(g);
+	testGround = new Ground(0, 0, 0, 100, 500, -120);
+	testMap.next = testGround;
+	groundPointer = testMap.next;
 
-	var g2 =  new Plane({
-        x:0, y:-300, z:-800,
-        width:100, height:500,
-        asset: 'snow',
-        repeatX: 100,
-        repeatY: 500,
-        rotationX:-90
-	});
+	// var g2 =  new Plane({
+     //    x:0, y:-300, z:-800,
+     //    width:100, height:500,
+     //    asset: 'snow',
+     //    repeatX: 100,
+     //    repeatY: 500,
+     //    rotationX:-90
+	// });
+    //
+	// world.add(g2);
 
-	world.add(g2);
+	var nextGround = new Ground(0, -300, -800, 100, 500, -120);
+
+	// testRamp = (0, -125, worldEnd-2, )
 	var test = new Ramp(
-		0, 125 * -1, worldEnd - 2
+		0, 125 * -1, worldEnd - 2, 60, 50
 	);
+	test.lowerBound = testGround.upperBound;
+	groundPointer.next = test;
+	groundPointer.next.prev = groundPointer;
+
+	var air = new Air(test.upperBound, -550);
+	groundPointer.next.next = air;
+	air.prev = groundPointer.next;
+	groundPointer.next.next.next = nextGround;
+	console.log(groundPointer.next.next.next.upperBound);
 
     for(var i = 550; i < 1050; i++){
         ground[i] = 'plane';
@@ -85,11 +106,23 @@ function setup() {
 }
 
 function draw() {
+	console.log(groundPointer.upperBound);
 	document.getElementById("score").innerHTML = "Score: " + (score + bonus);
 	document.getElementById("hits").innerHTML = "Hits: " + hits;
 
 	// always move the player forward a little bit - their movement vector
 	// is determined based on what they are looking at
+
+	var pos = world.getUserPosition();
+
+	if (pos.z < groundPointer.upperBound){
+		groundPointer = groundPointer.next;
+	}
+
+	else if (pos.z > groundPointer.lowerBound){
+		groundPointer = groundPointer.prev;
+	}
+
 	for (var i = 0; i < coins.length; i++){
 		if(coins[i].checkHit()){
 			coins.splice(i, 1);
@@ -113,13 +146,15 @@ function draw() {
 
 	var xRotation = world.getUserRotation().y;
 	var xMove = xSpeed * xRotation;
-	var pos = world.getUserPosition();
 
 	var currentGround = ground[Math.floor(pos.z * -1)];
-	console.log(currentGround);
+	// console.log(currentGround);
 	userX = pos.x - xMove;
 
 	if (rampHit) {
+		if(currentGround === 'ramp'){
+			zSpeed -= 0.001;
+		}
 		if(currentGround === 'plane'){
 			rampHit = false;
 		}
@@ -138,7 +173,7 @@ function draw() {
 
 	else{
 		if (currentGround === 'plane'){
-            if (pos.y - ySpeed > groundMap[Math.floor(pos.z * -1)] + 0.5){
+            if (groundPointer.userIsOnGround()){
                 userY = pos.y - ySpeed;
             }
 
@@ -148,8 +183,12 @@ function draw() {
 		}
 
 		else{
+			if (currentGround === 'ramp'){
+				ySpeed = zSpeed * slope;
+			}
+
             userY = pos.y + ySpeed;
-            	if (pos.y > groundMap[Math.floor(pos.z * -1)] + 0.5 || currentGround === undefined){
+            	if (!groundPointer.userIsOnGround()){
                     ySpeed -= fallSpeed;
                     fallSpeed += 0.00001;
 				}
@@ -159,22 +198,6 @@ function draw() {
 	userZ = pos.z - zSpeed ;
 	score = int(-userZ * 3);
 	world.setUserPosition(userX, userY, userZ);
-
-	// world.moveUserForward(0.01);
-	// console.log(xRotation);
-	// now evaluate
-	// if (pos.z < worldEnd * -1) {
-	// 	world.setUserPosition(0, 0.5, 0);
-	// }
-	// else if (pos.x < -50) {
-	// 	world.setUserPosition(50, pos.y, pos.z);
-	// }
-	// if (pos.z > 50) {
-	// 	world.setUserPosition(pos.x, pos.y, -50);
-	// }
-	// else if (pos.z < -50) {
-	// 	world.setUserPosition(pos.x, pos.y, 50);
-	// }
 }
 
 function Coin(x, y, z){
@@ -199,14 +222,20 @@ function Coin(x, y, z){
 	}
 }
 
-function Ramp(x, y, z){
+function Ramp(x, y, z, width, length){
 	this.x = x;
 	this.y = y;
 	this.z = z;
+	this.width = width;
+	this.length = length;
+	this.next = undefined;
+	this.prev = undefined;
+    this.upperBound = this.z - (length/4 * radicalThree);
+    this.lowerBound = this.z + (length/4 * radicalThree);
 
     this.b = new Box({
         x:x, y: y, z:z,
-        width: 60, height: 50, depth: 2,
+        width: this.width, height: this.length, depth: 2,
         asset: 'snow',
         repeatX: 100,
         repeatY: 500,
@@ -217,8 +246,6 @@ function Ramp(x, y, z){
 
     var start = ground.length;
     var limit = ground.length + Math.floor(25 * 1.73205080757);
-
-    console.log("RAMP START: " + start + " LIMIT: " + limit);
 
     for (var i = start; i <= limit; i++){
     	ground.push('ramp');
@@ -233,6 +260,16 @@ function Ramp(x, y, z){
                 return true;
             }
 		}
+    }
+
+    this.userIsOnGround = function(){
+        var pos = world.getUserPosition();
+        var relativeZ = pos.z - this.z;
+        var relativeGround = relativeZ * slope + this.y;
+        return (Math.abs(pos.x - this.x) <= width/2 &&
+            pos.y >= relativeGround + 0.5 &&
+            Math.abs(pos.z - this.z) <= length/2
+        )
     }
 }
 
@@ -354,8 +391,71 @@ function addObjects(limit, start, tilt){
 		}
 
 		var c = new Coin(x, y ,z);
-		// c.addChild(T);
-		// c.addChild(T2);
 		coins.push(c);
 	}
+}
+
+function Ground(x, y, z, width, length, angle){
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	this.width = width;
+	this.length = length;
+	this.angle = angle;
+	this.upperBound = (length/4 * radicalThree * -1) + this.z;
+	this.lowerBound = this.z - (length/4 * radicalThree * -1);
+	this.next = undefined;
+	this.prev = undefined;
+
+	var p = new Plane({
+		x:x, y:y, z:z,
+        width:width, height:length,
+        asset: 'snow',
+        repeatX: width,
+        repeatY: length,
+        rotationX:angle
+	});
+
+	world.add(p);
+
+	this.userIsOnGround = function(){
+		var pos = world.getUserPosition();
+		var relativeZ = pos.z - this.z;
+		var relativeGround = relativeZ * slope + this.y;
+		return (Math.abs(pos.x - this.x) <= width/2 &&
+				pos.y >= relativeGround + 0.5 &&
+				Math.abs(pos.z - this.z) <= length/2
+				)
+	}
+
+	this.addGround = function(newGround){
+		this.next = newGround;
+	}
+}
+
+function Air(start, end){
+    this.upperBound = end;
+    this.lowerBound = start;
+    this.next = undefined;
+    this.prev = undefined;
+
+    this.userIsOnGround = function(){
+        return false
+    };
+
+    this.addGround = function(newGround){
+        this.next = newGround;
+    }
+}
+
+function GroundMap(){
+	this.next = undefined;
+
+	// this.addGround = function(newGround){
+	// 	var temp = this.next;
+	// 	while(this.next !== undefined){
+	// 		temp = temp.next;
+	// 	}
+	// 	temp.next = newGround;
+	// }
 }
