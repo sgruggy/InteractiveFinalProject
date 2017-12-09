@@ -81,7 +81,7 @@ function setup() {
     //
 	// world.add(g2);
 
-	var nextGround = new Ground(0, -300, -800, 100, 500, -120);
+	var nextGround = new Ground(0, -300, -600, 100, 500, -120);
 
 	// testRamp = (0, -125, worldEnd-2, )
 	var test = new Ramp(
@@ -94,7 +94,8 @@ function setup() {
 	var air = new Air(test.upperBound, -550);
 	groundPointer.next.next = air;
 	air.prev = groundPointer.next;
-	groundPointer.next.next.next = nextGround;
+	air.next = nextGround;
+	air.upperBound = nextGround.lowerBound;
 	console.log(groundPointer.next.next.next.upperBound);
 
     for(var i = 550; i < 1050; i++){
@@ -106,7 +107,7 @@ function setup() {
 }
 
 function draw() {
-	console.log(groundPointer.upperBound);
+	console.log(groundPointer.id);
 	document.getElementById("score").innerHTML = "Score: " + (score + bonus);
 	document.getElementById("hits").innerHTML = "Hits: " + hits;
 
@@ -147,15 +148,14 @@ function draw() {
 	var xRotation = world.getUserRotation().y;
 	var xMove = xSpeed * xRotation;
 
-	var currentGround = ground[Math.floor(pos.z * -1)];
 	// console.log(currentGround);
 	userX = pos.x - xMove;
 
 	if (rampHit) {
-		if(currentGround === 'ramp'){
+		if(groundPointer.id === 'ramp'){
 			zSpeed -= 0.001;
 		}
-		if(currentGround === 'plane'){
+		if(groundPointer.id === 'ground'){
 			rampHit = false;
 		}
     }
@@ -166,32 +166,30 @@ function draw() {
     }
 	xSpeed = zSpeed / 50;
 
-	if(falling){
-		userY = (pos.y - zSpeed * slope) - fallSpeed;
-		fallSpeed += 0.01;
+	if (groundPointer.id === 'ground'){
+		if (groundPointer.userIsOnGround()){
+			userY = pos.y - ySpeed;
+		}
+
+		else {
+			// userY = groundMap[Math.floor(pos.z* -1)] + 0.5
+			userY = pos.y + ySpeed;
+		}
 	}
 
 	else{
-		if (currentGround === 'plane'){
-            if (groundPointer.userIsOnGround()){
-                userY = pos.y - ySpeed;
-            }
+		if (groundPointer.id === 'ramp'){
+			ySpeed = zSpeed * slope;
+		}
 
-            else if (pos.y - ySpeed < groundMap[Math.floor(pos.z* -1)] + 0.5){
-            	userY = groundMap[Math.floor(pos.z* -1)] + 0.5
-			}
+		userY = pos.y + ySpeed;
+		if (!groundPointer.userIsOnGround() || groundPointer.id === 'air'){
+			ySpeed -= fallSpeed;
+			fallSpeed += 0.00001;
 		}
 
 		else{
-			if (currentGround === 'ramp'){
-				ySpeed = zSpeed * slope;
-			}
-
-            userY = pos.y + ySpeed;
-            	if (!groundPointer.userIsOnGround()){
-                    ySpeed -= fallSpeed;
-                    fallSpeed += 0.00001;
-				}
+			fallSpeed = 0;
 		}
 	}
 
@@ -226,6 +224,7 @@ function Ramp(x, y, z, width, length){
 	this.x = x;
 	this.y = y;
 	this.z = z;
+	this.id = 'ramp';
 	this.width = width;
 	this.length = length;
 	this.next = undefined;
@@ -267,7 +266,7 @@ function Ramp(x, y, z, width, length){
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope + this.y;
         return (Math.abs(pos.x - this.x) <= width/2 &&
-            pos.y >= relativeGround + 0.5 &&
+            Math.abs(pos.y - (relativeGround + 0.5)) >= 0.1 &&
             Math.abs(pos.z - this.z) <= length/2
         )
     }
@@ -399,6 +398,7 @@ function Ground(x, y, z, width, length, angle){
 	this.x = x;
 	this.y = y;
 	this.z = z;
+	this.id = 'ground';
 	this.width = width;
 	this.length = length;
 	this.angle = angle;
@@ -423,7 +423,7 @@ function Ground(x, y, z, width, length, angle){
 		var relativeZ = pos.z - this.z;
 		var relativeGround = relativeZ * slope + this.y;
 		return (Math.abs(pos.x - this.x) <= width/2 &&
-				pos.y >= relativeGround + 0.5 &&
+				Math.abs(pos.y - (relativeGround + 0.5)) >= 0.1 &&
 				Math.abs(pos.z - this.z) <= length/2
 				)
 	}
@@ -436,6 +436,7 @@ function Ground(x, y, z, width, length, angle){
 function Air(start, end){
     this.upperBound = end;
     this.lowerBound = start;
+    this.id = 'air';
     this.next = undefined;
     this.prev = undefined;
 
