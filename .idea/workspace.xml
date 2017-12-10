@@ -26,8 +26,8 @@
       <file leaf-file-name="sketch.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/sketch.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="376">
-              <caret line="54" column="44" lean-forward="true" selection-start-line="54" selection-start-column="44" selection-end-line="54" selection-end-column="44" />
+            <state relative-caret-position="243">
+              <caret line="108" column="22" lean-forward="false" selection-start-line="108" selection-start-column="22" selection-end-line="108" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -221,12 +221,12 @@
       <option name="presentableId" value="Default" />
       <updated>1512259482734</updated>
       <workItem from="1512259484397" duration="12771000" />
-      <workItem from="1512363345546" duration="64254000" />
+      <workItem from="1512363345546" duration="69027000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="77025000" />
+    <option name="totallyTimeSpent" value="81798000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-10" y="53" width="1932" height="1092" extended-state="6" />
@@ -321,8 +321,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sketch.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="376">
-          <caret line="54" column="44" lean-forward="true" selection-start-line="54" selection-start-column="44" selection-end-line="54" selection-end-column="44" />
+        <state relative-caret-position="243">
+          <caret line="108" column="22" lean-forward="false" selection-start-line="108" selection-start-column="22" selection-end-line="108" selection-end-column="22" />
           <folding />
         </state>
       </provider>

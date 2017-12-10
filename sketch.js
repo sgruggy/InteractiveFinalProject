@@ -28,11 +28,6 @@ var groundPointer;
 
 function preload(){
 	collectSound = loadSound("collect.mp3");
-    for (var i = 0; i <= Math.floor(125 * 1.73205080757); i++){
-        ground.push('plane');
-        groundMap[i] = i * slope * -1;
-    }
-
 }
 
 function setup() {
@@ -43,10 +38,15 @@ function setup() {
 	// this function requires a reference to the ID of the 'a-scene' tag in our HTML document
 	world = new World('VRScene');
 
-	addObjects(worldEnd, 0, slope);
+	// addObjects(worldEnd, 0, slope);
 	world.setUserPosition(0, 0.5, 0);
 	AddSection(0);
-	// AddSection(1);
+	AddSection(1);
+	AddSection(2);
+	AddSection(3);
+	AddSection(4);
+	AddSection(5);
+	AddSection(6);
 }
 
 function draw() {
@@ -123,13 +123,16 @@ function draw() {
         else {
             ySpeed = zSpeed * slope;
             userY = pos.y - ySpeed;
+            fallSpeed = 0;
         }
 	}
 
 	else{
 		if (groundPointer.id === 'ramp'){
 			zSpeed -= 0.002;
-			ySpeed = zSpeed * slope * -1;
+			if (ySpeed > 0){
+				ySpeed *= -1;
+			}
             userY = pos.y - ySpeed;
         }
 
@@ -393,10 +396,12 @@ function Air(start, end){
 
 function GroundMap(){
 	this.next = undefined;
+	this.length = 0;
 
 	this.addGround = function(newGround){
 		if (this.next === undefined){
 			this.next = newGround;
+			this.length += (newGround.upperBound - this.length);
 		}
 		else{
             var temp = this.next;
@@ -404,22 +409,37 @@ function GroundMap(){
                 temp = temp.next;
             }
             newGround.prev = temp;
-            temp.next = newGround;
+            if (temp.id !== 'air'){
+                newGround.lowerBound = temp.upperBound;
+                temp.next = newGround;
+                temp.upperBound = newGround.lowerBound;
+                this.length += (newGround.upperBound - this.length);
+			}
+
+			else{
+            	console.log("AIR");
+            	temp.upperBound = newGround.lowerBound;
+            	temp.next = newGround;
+                this.length += (newGround.upperBound - this.length);
+            }
 		}
 
 	}
 }
 
 function AddSection(section) {
-    testGround = new Ground(0, -100 * section, 1050 * section, 100, 500, -120);
+	console.log("SECTION " + section);
+    testGround = new Ground(0, -300 * section, testMap.length, 100, 500, -120);
     testMap.addGround(testGround);
+    console.log(testMap.length);
     groundPointer = testMap.next;
 
     // var nextGround = new Ground(0, -300, section * -600, 100, 500, -120);
 
     // testRamp = (0, -125, worldEnd-2, )
+	console.log(testMap.length / radicalThree);
     var test = new Ramp(
-        0, 125 * -1, section * 1050 + worldEnd - 2, 60, 50
+        0, -300 * section + -125, testMap.length - (2 * (section + 1)), 60, 50
     );
     test.lowerBound = testGround.upperBound;
     // groundPointer.next = test;
@@ -427,7 +447,7 @@ function AddSection(section) {
     // test.prev = groundPointer;
     // groundPointer.next.prev = groundPointer;
 
-    var air = new Air(test.upperBound, -1500);
+    var air = new Air(test.upperBound, testMap.length + -300);
     // groundPointer.next.next = air;
     testMap.addGround(air);
     // air.prev = groundPointer.next;
