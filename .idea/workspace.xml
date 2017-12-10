@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd08e329-2985-49a4-8e5c-bf06f78813a7" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/aframep5.js" afterPath="$PROJECT_DIR$/libraries/aframep5.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sketch.js" afterPath="$PROJECT_DIR$/sketch.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +18,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="27">
-              <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+            <state relative-caret-position="189">
+              <caret line="7" column="103" lean-forward="false" selection-start-line="7" selection-start-column="103" selection-end-line="7" selection-end-column="103" />
               <folding />
             </state>
           </provider>
@@ -26,8 +28,8 @@
       <file leaf-file-name="sketch.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/sketch.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="108" column="22" lean-forward="false" selection-start-line="108" selection-start-column="22" selection-end-line="108" selection-end-column="22" />
+            <state relative-caret-position="-3564">
+              <caret line="6" column="17" lean-forward="true" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -37,8 +39,20 @@
         <entry file="file://$PROJECT_DIR$/libraries/aframep5.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="217">
-              <caret line="1890" column="4" lean-forward="false" selection-start-line="1890" selection-start-column="4" selection-end-line="1890" selection-end-column="4" />
-              <folding />
+              <caret line="1900" column="4" lean-forward="false" selection-start-line="1900" selection-start-column="4" selection-end-line="1900" selection-end-column="4" />
+              <folding>
+                <marker date="1512735350000" expanded="true" signature="34534:38800" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="35345:35574" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="35572:35574" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="38019:38798" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="38108:38795" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="39292:39359" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="39778:40210" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="39818:39979" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="40019:40207" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="40355:40479" ph="{...}" />
+                <marker date="1512735350000" expanded="true" signature="40521:40672" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -61,6 +75,7 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/sketch.js" />
       </list>
     </option>
@@ -113,7 +128,7 @@
     <property name="nodejs_interpreter_path" value="E:/Program Files/NodeJs/node" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../sideHustle" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -221,15 +236,15 @@
       <option name="presentableId" value="Default" />
       <updated>1512259482734</updated>
       <workItem from="1512259484397" duration="12771000" />
-      <workItem from="1512363345546" duration="69027000" />
+      <workItem from="1512363345546" duration="73873000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81798000" />
+    <option name="totallyTimeSpent" value="86644000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-10" y="53" width="1932" height="1092" extended-state="6" />
+    <frame x="-9" y="41" width="1938" height="1048" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -244,7 +259,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19017763" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18958333" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -295,34 +310,46 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/aframep5.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="1900" column="4" lean-forward="false" selection-start-line="1900" selection-start-column="4" selection-end-line="1900" selection-end-column="4" />
+          <folding>
+            <marker date="1512735350000" expanded="true" signature="34534:38800" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="35345:35574" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="35572:35574" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="38019:38798" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="38108:38795" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="39292:39359" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="39778:40210" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="39818:39979" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="40019:40207" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="40355:40479" ph="{...}" />
+            <marker date="1512735350000" expanded="true" signature="40521:40672" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/libraries/p5.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-956">
-          <caret line="59839" column="0" lean-forward="false" selection-start-line="59839" selection-start-column="0" selection-end-line="59839" selection-end-column="0" />
+        <state relative-caret-position="-527">
+          <caret line="46349" column="2" lean-forward="false" selection-start-line="46349" selection-start-column="2" selection-end-line="46349" selection-end-column="2" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27">
-          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libraries/aframep5.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="1890" column="4" lean-forward="false" selection-start-line="1890" selection-start-column="4" selection-end-line="1890" selection-end-column="4" />
+        <state relative-caret-position="189">
+          <caret line="7" column="103" lean-forward="false" selection-start-line="7" selection-start-column="103" selection-end-line="7" selection-end-column="103" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sketch.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="108" column="22" lean-forward="false" selection-start-line="108" selection-start-column="22" selection-end-line="108" selection-end-column="22" />
+        <state relative-caret-position="-3564">
+          <caret line="6" column="17" lean-forward="true" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
           <folding />
         </state>
       </provider>

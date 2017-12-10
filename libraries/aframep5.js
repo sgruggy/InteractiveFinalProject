@@ -1765,10 +1765,17 @@ function World(id) {
 		this.raycaster.setFromCamera( this.cursorPosition, this.camera.holder.object3D.children[1]);
 		this.intersects = this.raycaster.intersectObjects( this.threeSceneReference.children, true );
 		if (this.intersects.length > 0) {
-			return this.intersects[0];
-			//if (this.intersects[0].object.parent.el.eRef != undefined && this.intersects[0].object.parent.el.eRef.clickFunction != undefined) {
-				//this.intersects[0].object.parent.el.eRef.clickFunction( this.intersects[0].object.parent.el.eRef );
-			//}
+
+			// ignore cursor clicks
+			if (this.intersects[0].object.parent.el.attributes.cursor != undefined) {
+				// grab the next intersected object
+				if (this.intersects.length > 1) {
+					return this.intersects[1];
+				}
+			}
+			else {
+				return this.intersects[0];
+			}
 		}
 		return false;
 	}
@@ -1843,10 +1850,13 @@ function World(id) {
 
 
 	// global click handler
-	document.addEventListener('mousedown', function() {
-		_this.triggerClickFunction();
+	this.lastEventFrame = 0;
+	document.addEventListener('mousedown', function(event) {
+		if (_this.lastEventFrame < frameCount) {
+			_this.lastEventFrame = frameCount;
+			_this.triggerClickFunction();
+		}
 	}); // end internal global click handler
-
 
 	this.slideToObject = function(element, time) {
 

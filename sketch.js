@@ -40,13 +40,8 @@ function setup() {
 
 	// addObjects(worldEnd, 0, slope);
 	world.setUserPosition(0, 0.5, 0);
-	AddSection(0);
-	AddSection(1);
-	AddSection(2);
-	AddSection(3);
-	AddSection(4);
-	AddSection(5);
-	AddSection(6);
+	AddSection(section);
+    skySphereReference = select('#theSky');
 }
 
 function draw() {
@@ -76,9 +71,9 @@ function draw() {
 		}
 	}
 
-	for (var i = 0; i < Ramps.length; i++){
-		Ramps[i].checkHit();
-	}
+	// for (var i = 0; i < Ramps.length; i++){
+	// 	Ramps[i].checkHit();
+	// }
 
 	for (var i = 0; i < Obstacles.length; i++){
 		if (Obstacles[i].checkHit()){
@@ -97,10 +92,6 @@ function draw() {
 	// if (rampHit) {
     if (groundPointer.id !== 'ramp') {
         zSpeed += 0.002;
-    }
-
-    if(groundPointer.id === 'ground'){
-		rampHit = false;
     }
 
 	xSpeed = zSpeed / 50;
@@ -129,11 +120,17 @@ function draw() {
 
 	else{
 		if (groundPointer.id === 'ramp'){
+			if (rampHit == false){
+				rampHit = true;
+				section += 1;
+				AddSection(section);
+                }
+
 			zSpeed -= 0.002;
 			if (ySpeed > 0){
 				ySpeed *= -1;
 			}
-            userY = pos.y - ySpeed;
+			userY = pos.y - ySpeed;
         }
 
 		else if (!groundPointer.userIsOnGround() || groundPointer.id === 'air'){
@@ -146,6 +143,7 @@ function draw() {
 	userZ = pos.z - zSpeed ;
 	score = int(-userZ * 3);
 	world.setUserPosition(userX, userY, userZ);
+    skySphereReference.elt.object3D.position.set(userX, userY, userZ);
 }
 
 function Coin(x, y, z){
@@ -200,6 +198,9 @@ function Ramp(x, y, z, width, length){
         var pos = world.getUserPosition();
         if(!rampHit){
             if (this.x - pos.x <= 30 && Math.abs(this.z - pos.z) <= 1){
+            	console.log("HIT");
+            	// section += 1;
+            	// AddSection(section);
                 rampHit = true;
                 return true;
             }
@@ -210,6 +211,7 @@ function Ramp(x, y, z, width, length){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope * -1 + this.y;
+        console.log(Math.abs(pos.x - this.x));
         return (Math.abs(pos.x - this.x) <= width/2 &&
             Math.abs(pos.y - (relativeGround + 0.5)) <= 0.5 &&
             Math.abs(pos.z - this.z) <= length/2
@@ -428,16 +430,13 @@ function GroundMap(){
 }
 
 function AddSection(section) {
-	console.log("SECTION " + section);
     testGround = new Ground(0, -300 * section, testMap.length, 100, 500, -120);
     testMap.addGround(testGround);
-    console.log(testMap.length);
     groundPointer = testMap.next;
 
     // var nextGround = new Ground(0, -300, section * -600, 100, 500, -120);
 
     // testRamp = (0, -125, worldEnd-2, )
-	console.log(testMap.length / radicalThree);
     var test = new Ramp(
         0, -300 * section + -125, testMap.length - (2 * (section + 1)), 60, 50
     );
