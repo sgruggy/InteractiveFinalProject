@@ -27,6 +27,7 @@ var testMap = new GroundMap();
 var groundPointer;
 var p;
 var currentRamp;
+var fallen = false;
 
 function preload(){
     collectSound = loadSound("collect.mp3");
@@ -81,12 +82,16 @@ function draw() {
 
     userX = pos.x - xMove;
     xSpeed = zSpeed / 50;
-    // console.log(rampHit);
-	if (p.userIsOnGround()){
+
+	if ((p.userIsOnGround() || p.userIsOverGround()) && !fallen){
         if (!rampHit){
             zSpeed += 0.001;
             ySpeed = zSpeed * slope;
             userY = pos.y - ySpeed;
+
+            if(p.userIsAwayFromGround()){
+            	fallen = true;
+			}
 
         }
         else{
@@ -100,11 +105,16 @@ function draw() {
                 ySpeed = zSpeed * slope * -1 + fallSpeed;
                 fallSpeed += 0.01;
                 var currentGround = pos.z * slope + 0.5;
-                if (pos.y - ySpeed < currentGround){
+                if (pos.y - ySpeed < currentGround && !p.userIsAwayFromGround()){
                     userY = currentGround;
                     rampHit = false;
                     fallSpeed = 0;
                 }
+
+                else if (pos.y - ySpeed < currentGround && p.userIsAwayFromGround()){
+                	fallen = true;
+				}
+
                 else{
                     userY = pos.y - ySpeed;
                 }
@@ -342,7 +352,8 @@ function Ground(x, y, z, width, length, angle){
         asset: 'snow',
         repeatX: width,
         repeatY: length,
-        rotationX:angle
+        rotationX:angle,
+		side:'double'
     });
 
     world.add(this.plane);
@@ -352,8 +363,21 @@ function Ground(x, y, z, width, length, angle){
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope + this.y;
         return (Math.abs(pos.x - this.x) <= this.width/2 &&
+				Math.abs(pos.y - relativeGround) <= .51 &&
             Math.abs(pos.z - this.z) <= this.plane.getHeight()/2
-        )
+        );
+    }
+
+    this.userIsOverGround = function(){
+        var pos = world.getUserPosition();
+        var relativeZ = pos.z - this.z;
+        var relativeGround = relativeZ * slope + this.y;
+        return (pos.y - relativeGround > .49);
+	}
+
+	this.userIsAwayFromGround = function(){
+        var pos = world.getUserPosition();
+        return !(Math.abs(pos.x - this.x) <= this.width/2);
     }
 
     this.addGround = function(newGround){
