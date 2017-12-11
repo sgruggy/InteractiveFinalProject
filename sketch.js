@@ -43,16 +43,7 @@ function setup() {
     addObjects(worldEnd, 0, slope);
     world.setUserPosition(0, 0.5, 0);
     // AddSection(section);
-    p = new Plane({
-        x:0, y:0, z:0,
-        width:100, height:500,
-        asset: 'snow',
-        repeatX: 100,
-        repeatY: 500,
-        rotationX:-120
-    });
-
-    world.add(p);
+    p = new Ground(0, 0, 0, 100, 500, -120);
 
     skySphereReference = select('#theSky');
 }
@@ -91,40 +82,48 @@ function draw() {
     userX = pos.x - xMove;
     xSpeed = zSpeed / 50;
     // console.log(rampHit);
-
-    if (!rampHit){
-        zSpeed += 0.001;
-        ySpeed = zSpeed * slope;
-        userY = pos.y - ySpeed;
-
-    }
-    else{
-        if(currentRamp.userIsOnGround()){
-            zSpeed -= 0.001;
-            ySpeed = zSpeed * slope * -1;
+	if (p.userIsOnGround()){
+        if (!rampHit){
+            zSpeed += 0.001;
+            ySpeed = zSpeed * slope;
             userY = pos.y - ySpeed;
-        }
 
+        }
         else{
-            ySpeed = zSpeed * slope * -1 + fallSpeed;
-            fallSpeed += 0.01;
-            var currentGround = pos.z * slope + 0.5;
-            if (pos.y - ySpeed < currentGround){
-                userY = currentGround;
-                rampHit = false;
-                fallSpeed = 0;
-            }
-            else{
+            if(currentRamp.userIsOnGround()){
+                zSpeed -= 0.001;
+                ySpeed = zSpeed * slope * -1;
                 userY = pos.y - ySpeed;
             }
+
+            else{
+                ySpeed = zSpeed * slope * -1 + fallSpeed;
+                fallSpeed += 0.01;
+                var currentGround = pos.z * slope + 0.5;
+                if (pos.y - ySpeed < currentGround){
+                    userY = currentGround;
+                    rampHit = false;
+                    fallSpeed = 0;
+                }
+                else{
+                    userY = pos.y - ySpeed;
+                }
+            }
         }
-    }
+	}
+
+	else{
+		ySpeed += fallSpeed;
+		fallSpeed += 0.001;
+		userY = pos.y - ySpeed;
+	}
+
 
     userZ = pos.z - zSpeed ;
     // score = int(-userZ * 3);
     world.setUserPosition(userX, userY, userZ);
-    skySphereReference.elt.object3D.position.set(userX, userY, userZ);
-    p.setHeight(p.getHeight() + zSpeed * 2 * radicalThree);
+    skySphereReference.elt.object3D.position.set(userX, 0, userZ);
+    p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
 
     if (userZ <= worldEnd/2){
         var temp = worldEnd;
@@ -337,7 +336,7 @@ function Ground(x, y, z, width, length, angle){
     this.next = undefined;
     this.prev = undefined;
 
-    var p = new Plane({
+    this.plane = new Plane({
         x:x, y:y, z:z,
         width:width, height:length,
         asset: 'snow',
@@ -346,15 +345,14 @@ function Ground(x, y, z, width, length, angle){
         rotationX:angle
     });
 
-    world.add(p);
+    world.add(this.plane);
 
     this.userIsOnGround = function(){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope + this.y;
-        return (Math.abs(pos.x - this.x) <= width/2 &&
-            Math.abs(pos.y - (relativeGround + 0.5)) <= 0.5 &&
-            Math.abs(pos.z - this.z) <= length/2
+        return (Math.abs(pos.x - this.x) <= this.width/2 &&
+            Math.abs(pos.z - this.z) <= this.plane.getHeight()/2
         )
     }
 
