@@ -132,7 +132,7 @@ function draw() {
     userZ = pos.z - zSpeed ;
     // score = int(-userZ * 3);
     world.setUserPosition(userX, userY, userZ);
-    skySphereReference.elt.object3D.position.set(userX, 0, userZ);
+    skySphereReference.elt.object3D.position.set(0, 0, userZ);
     p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
 
     if (userZ <= worldEnd/2){
@@ -156,6 +156,7 @@ function Coin(x, y, z){
 
     world.add(this.t);
     this.checkHit = function(){
+    	this.t.spinY(2);
         var pos = world.getUserPosition();
         if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
             world.remove(this.t);
