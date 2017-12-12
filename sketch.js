@@ -20,6 +20,9 @@ var groundMap = [];
 var collectSound;
 var section = 0;
 var rampHit = false;
+var obstacleHit = false;
+var justHit = false;
+var angle;
 var score = 0;
 var bonus = 0;
 var hits = 0;
@@ -84,16 +87,44 @@ function draw() {
     xSpeed = zSpeed / 50;
 
 	if ((p.userIsOnGround() || p.userIsOverGround()) && !fallen){
-        if (!rampHit){
+        if (!rampHit && !obstacleHit){
             zSpeed += 0.001;
             ySpeed = zSpeed * slope;
             userY = pos.y - ySpeed;
 
             if(p.userIsAwayFromGround()){
             	fallen = true;
-			}
+			      }
 
         }
+
+        else if (!rampHit) {
+          console.log(justHit);
+          if (justHit) {
+            zSpeed *= 0.5;
+            angle = random(-.5,.5);
+            ySpeed = zSpeed * slope * random(.5, .75);
+            userY = pos.y - ySpeed;
+            justHit = false;
+          }
+
+          else {
+            xMove = zSpeed / 50 + angle;
+            userX = userX - xMove;
+            ySpeed = zSpeed * slope * -1 + fallSpeed;
+            fallSpeed += 0.01;
+            var currentGround = pos.z * slope + 0.5;
+            if (pos.y - ySpeed < currentGround){
+                userY = currentGround;
+                obstacleHit = false;
+                fallSpeed = 0;
+            }
+            else{
+                userY = pos.y - ySpeed;
+            }
+          }
+        }
+
         else{
             if(currentRamp.userIsOnGround()){
                 zSpeed -= 0.001;
@@ -287,7 +318,8 @@ function Obstacle(x, y, z, texture) {
             var pos = world.getUserPosition();
             if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
                 world.remove(this.b);
-                zSpeed = 0.02;
+                obstacleHit = true;
+                justHit = true;
                 return true;
             }
         }
