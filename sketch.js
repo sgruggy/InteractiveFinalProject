@@ -58,7 +58,7 @@ function setup() {
     p = new Ground(0, 0, 0, 50, 50, -120);
     var temp = groundEnd;
     groundEnd -= (25 * radicalThree);
-    addObjects(groundEnd, temp, slope);
+    addObjects(groundEnd + (12.5 * radicalThree), temp, 0);
     groundDepth -= (25);
 
     offSet = noise(xOff) * 10;
@@ -67,7 +67,7 @@ function setup() {
 	p2 = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
     temp = groundEnd;
     groundEnd -= (25 * radicalThree);
-    addObjects(groundEnd, temp, slope);
+    addObjects(groundEnd + (12.5 * radicalThree) , temp, r);
 	groundDepth -= 25;
 
     offSet = noise(xOff) * 10;
@@ -76,7 +76,7 @@ function setup() {
     p3 = new Ground(r, groundDepth , groundEnd, 50, 50, -120);
     temp = groundEnd;
     groundEnd -= (25 * radicalThree);
-    addObjects(groundEnd, temp, slope);
+    addObjects(groundEnd + (12.5 * radicalThree), temp, r);
     groundDepth -= (25);
 
     grounds.push(p);
@@ -100,14 +100,14 @@ function draw() {
 
     if ((pos.z/2) * radicalThree <= groundEnd + 800){
         // world.remove(groundPointer.plane);
-        offSet = noise(xOff) * 10;
-        r = map(offSet, 0, 10, -50, 50);
+        var offSet = noise(xOff) * 10;
+        var r = map(offSet, 0, 10, -50, 50);
         xOff += 1;
         var next = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
         grounds.push(next);
         var temp = groundEnd;
         groundEnd -= (25 * radicalThree);
-        addObjects(groundEnd, temp, slope);
+        addObjects(groundEnd + (12.5 * radicalThree), temp, r);
         groundDepth -= (25);
     }
 
@@ -227,16 +227,25 @@ function draw() {
     var relativeGround = relativeZ * slope * -1 + this.y;
 }
 
-function Coin(x, y, z){
+function Coin(x, y, z, diamond){
     this.x = x;
     this.y = y+1;
     this.z = z;
+    this.diamond = diamond;
+    this.texture = undefined;
+
+    if (this.diamond){
+        this.texture = 'diamond';
+    }
+    else{
+        this.texture = 'gold';
+    }
 
     this.t = new Torus({
         x:this.x,
         y:this.y,
         z:this.z,
-        asset:'gold'
+        asset:this.texture
     });
 
     world.add(this.t);
@@ -247,6 +256,9 @@ function Coin(x, y, z){
             bonus += 50;
             collectSound.play();
             zSpeed += 0.005;
+            if (this.diamond){
+                fallSpeed -= 1;
+            }
             return true;
         }
 
@@ -301,7 +313,7 @@ function Ramp(x, y, z){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope * -1 + this.y;
-        return (Math.abs(pos.x - this.x) <= width/2 &&
+        return (Math.abs(pos.x - this.x) <= (width/2 + 3) &&
             Math.abs(pos.y - (relativeGround)) <= 2 &&
             Math.abs(pos.z - this.z) <= this.length/2
         )
@@ -376,43 +388,34 @@ function Obstacle(x, y, z, texture) {
 }
 
 
-function addObjects(limit, start, tilt){
+function addObjects(limit, start, offset){
     var textures = ['iron', 'stone', 'gold'];
     // create lots of boxes
     for (var i = 0; i < (start - limit)/4; i++) {
         // pick a location
-        var x = random(-37.5, 37.5);
+        var x = random(-22.5, 22.5) + offset;
         var z = random(limit, start);
-        var y;
-
-        if (tilt == 1){
-            y = (125 * (section) * -1);
-        }
-
-        else{
-            y = z * tilt;
-        }
-
+        var y = z * slope;
         // pick a random texture
         var t = textures[ int(random(textures.length-1)) ];
 
         var obstacle = new Obstacle(x, y, z, t);
         Obstacles.push(obstacle);
 
-        if (i % 3 == 0){
-            x = random(-37.5, 37.5);
+        if (i % 2 == 0){
+            x = random(-37.5, 37.5) + offset;
             z = random(limit, start);
-
-            if (tilt == 1){
-                y = (125 * (section + 1) * -1) + 1;
+            var roll = random(1);
+            if (roll >= .75 || Math.abs(x) > 25){
+                y = z * slope + random(5) + 5;;
+                var c = new Coin(x, y ,z, true);
+                coins.push(c);
             }
-
             else{
-                y = z * tilt;
+                y = z * slope;
+                var c = new Coin(x, y ,z, false);
+                coins.push(c);
             }
-
-            var c = new Coin(x, y ,z);
-            coins.push(c);
 		}
     }
 }
@@ -446,7 +449,7 @@ function Ground(offset, y, z, width, length, angle){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope + this.y;
-        return (Math.abs(pos.x - this.x) <= this.width/2 &&
+        return (Math.abs(pos.x - this.x) <= this.width/2 + 3 &&
 				Math.abs(pos.y - relativeGround) <= .51 &&
             Math.abs(pos.z - this.z) <= this.plane.getHeight()/2
         );
@@ -461,7 +464,7 @@ function Ground(offset, y, z, width, length, angle){
 
 	this.userIsAwayFromGround = function(){
         var pos = world.getUserPosition();
-        return !(Math.abs(pos.x - this.x) <= this.width/2);
+        return !(Math.abs(pos.x - this.x) <= this.width/2 + 3);
     }
 
     this.addGround = function(newGround){

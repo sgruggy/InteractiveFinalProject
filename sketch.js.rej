@@ -1,0 +1,9 @@
+diff a/sketch.js b/sketch.js	(rejected hunks)
+@@ -54,6 +54,7 @@
+     world = new World('VRScene');
+ 
+     // addObjects(worldEnd, 0, slope);
++    world.setUserPosition(0, 0.5, 0);
+     // AddSection(section);
+     var offSet = noise(xOff) * 10;
+     var r = map(offSet, 0, 10, -50, 50);
