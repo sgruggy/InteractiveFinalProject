@@ -242,7 +242,7 @@ function draw() {
       console.log(goodSpot);
     }
 
-    if (hits >= 5 || fallen) {
+    if (hits >= 5 || pos.y + 2000 < groundPointer.y ) {
         state = 2;
     }
   }
