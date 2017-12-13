@@ -573,7 +573,10 @@ function startScreen() {
 function gameOver() {
   var div = document.getElementById("gameOver");
   div.style.display = 'block';
-  div.innerHTML = 'Game Over\nScore: ' + (score + bonus);
+  var end = document.getElementById("end");
+  var finalScore = document.getElementById("finalScore");
+  end.innerHTML = 'Game Over';
+  finalScore.innerHTML = 'Score: ' + (score + bonus);
 
   var scoreVar = document.getElementById("score");
   var hitVar = document.getElementById("hits");
