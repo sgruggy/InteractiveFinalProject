@@ -8,15 +8,12 @@ var zSpeed = 0.1;
 var slope = 0.5773;
 var radicalThree = 1.73205080757;
 var ySpeed = zSpeed * slope;
-var sliding = false;
 var fallSpeed = 0.000001;
-var falling = false;
-var worldEnd = -1 * 125 * 1.73205080757;
+var worldEnd = -400;
 var coins = [];
 var Ramps = [];
 var Obstacles = [];
 var ground = [];
-var groundMap = [];
 var collectSound;
 var section = 0;
 var rampHit = false;
@@ -26,12 +23,22 @@ var angle;
 var score = 0;
 var bonus = 0;
 var hits = 0;
-var testMap = new GroundMap();
 var groundPointer;
 var p;
+var p2;
+var p3;
 var currentRamp;
 var fallen = false;
+<<<<<<< HEAD
 var state = 0;
+=======
+var grounds = [];
+var groundEnd = 0;
+var groundDepth = 0;
+var groundPointer;
+var groundIndex = 0;
+var xOff = 0.0;
+>>>>>>> 9838439968ed3fab44af05e56cc39fe44cb448e8
 
 function preload(){
     collectSound = loadSound("collect.mp3");
@@ -40,22 +47,102 @@ function preload(){
 function setup() {
     // no canvas needed
     noCanvas();
+    noiseDetail(24);
 
     // construct the A-Frame world
     // this function requires a reference to the ID of the 'a-scene' tag in our HTML document
     world = new World('VRScene');
 
-    addObjects(worldEnd, 0, slope);
-    world.setUserPosition(0, 30, 50);
+    // addObjects(worldEnd, 0, slope);
+    world.setUserPosition(0, 0.5, 0);
     // AddSection(section);
-    p = new Ground(0, 0, 0, 100, 500, -120);
+    var offSet = noise(xOff) * 10;
+    var r = map(offSet, 0, 10, -50, 50);
+    xOff += 1;
+    p = new Ground(0, 0, 0, 50, 50, -120);
+    var temp = groundEnd;
+    groundEnd -= (25 * radicalThree);
+    addObjects(groundEnd, temp, slope);
+    groundDepth -= (25);
 
+    offSet = noise(xOff) * 10;
+    r = map(offSet, 0, 10, -50, 50);
+    xOff += 1;
+	p2 = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
+    temp = groundEnd;
+    groundEnd -= (25 * radicalThree);
+    addObjects(groundEnd, temp, slope);
+	groundDepth -= 25;
+
+    offSet = noise(xOff) * 10;
+    r = map(offSet, 0, 10, -50, 50);
+    xOff += 1;
+    p3 = new Ground(r, groundDepth , groundEnd, 50, 50, -120);
+    temp = groundEnd;
+    groundEnd -= (25 * radicalThree);
+    addObjects(groundEnd, temp, slope);
+    groundDepth -= (25);
+
+    grounds.push(p);
+    grounds.push(p2);
+    grounds.push(p3);
+
+    groundPointer = grounds[groundIndex];
     skySphereReference = select('#theSky');
 }
 
 function draw() {
+<<<<<<< HEAD
     if (state == 0) {
       startScreen();
+=======
+    document.getElementById("score").innerHTML = "Score: " + (score + bonus);
+    document.getElementById("hits").innerHTML = "Hits: " + hits;
+    var pos = world.getUserPosition();
+
+    if (groundPointer.z - pos.z >= 12.5 * radicalThree){
+        groundIndex++;
+        console.log(groundIndex);
+        groundPointer = grounds[groundIndex];
+    }
+
+    if ((pos.z/2) * radicalThree <= groundEnd + 800){
+        // world.remove(groundPointer.plane);
+        offSet = noise(xOff) * 10;
+        r = map(offSet, 0, 10, -50, 50);
+        xOff += 1;
+        var next = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
+        grounds.push(next);
+        var temp = groundEnd;
+        groundEnd -= (25 * radicalThree);
+        addObjects(groundEnd, temp, slope);
+        groundDepth -= (25);
+    }
+
+    for (var i = 0; i < coins.length; i++){
+        if(coins[i].checkHit()){
+            coins.splice(i, 1);
+            i--;
+        }
+    }
+
+    for (i = 0; i < Ramps.length; i++){
+        if(Ramps[i].checkHit()){
+            currentRamp = Ramps[i];
+        }
+
+        if(Ramps[i].checkRemove()){
+			Ramps.splice(i, 1);
+			i--;
+		}
+    }
+
+    for (i = 0; i < Obstacles.length; i++){
+        if (Obstacles[i].checkHit()){
+            Obstacles.splice(i, 1);
+            i--;
+        }
+>>>>>>> 9838439968ed3fab44af05e56cc39fe44cb448e8
     }
 
     else if (state == 1) {
@@ -94,6 +181,7 @@ function draw() {
       var xRotation = world.getUserRotation().y;
       var xMove = xSpeed * xRotation;
 
+<<<<<<< HEAD
       userX = pos.x - xMove;
       xSpeed = zSpeed / 50;
 
@@ -104,6 +192,19 @@ function draw() {
               }
               ySpeed = zSpeed * slope;
               userY = pos.y - ySpeed;
+=======
+	if ((groundPointer.userIsOnGround() || groundPointer.userIsOverGround()) && !fallen){
+        if (!rampHit && !obstacleHit){
+            if (zSpeed < 1.5) {
+              zSpeed += 0.001;
+            }
+            ySpeed = zSpeed * slope;
+            userY = pos.y - ySpeed;
+
+            if(groundPointer.userIsAwayFromGround()){
+            	fallen = true;
+			      }
+>>>>>>> 9838439968ed3fab44af05e56cc39fe44cb448e8
 
               if(p.userIsAwayFromGround()){
               	fallen = true;
@@ -138,6 +239,7 @@ function draw() {
             }
           }
 
+<<<<<<< HEAD
           else{
               if(currentRamp.userIsOnGround()){
                   zSpeed -= 0.001;
@@ -165,6 +267,28 @@ function draw() {
               }
           }
   	}
+=======
+            else{
+                ySpeed = zSpeed * slope * -1 + fallSpeed;
+                fallSpeed += 0.01;
+                var currentGround = pos.z * slope + 0.5;
+                if (pos.y - ySpeed < currentGround && !groundPointer.userIsAwayFromGround()){
+                    userY = currentGround;
+                    rampHit = false;
+                    fallSpeed = 0;
+                }
+
+                else if (pos.y - ySpeed < currentGround && groundPointer.userIsAwayFromGround()){
+                	fallen = true;
+				}
+
+                else{
+                    userY = pos.y - ySpeed;
+                }
+            }
+        }
+	}
+>>>>>>> 9838439968ed3fab44af05e56cc39fe44cb448e8
 
   	else{
   		ySpeed += fallSpeed;
@@ -177,6 +301,7 @@ function draw() {
     score = int(-userZ * 3) + 149;
     world.setUserPosition(userX, userY, userZ);
     skySphereReference.elt.object3D.position.set(0, 0, userZ);
+<<<<<<< HEAD
     p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
 
     if (userZ <= worldEnd/2){
@@ -193,6 +318,11 @@ function draw() {
   else if (state == 2) {
     gameOver();
   }
+=======
+    // p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
+    var relativeZ = pos.z - this.z;
+    var relativeGround = relativeZ * slope * -1 + this.y;
+>>>>>>> 9838439968ed3fab44af05e56cc39fe44cb448e8
 }
 
 function Coin(x, y, z){
@@ -212,9 +342,16 @@ function Coin(x, y, z){
     	this.t.spinY(2);
         var pos = world.getUserPosition();
         if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
-            world.remove(this.t);
+            bonus += 50;
+            collectSound.play();
+            zSpeed += 0.005;
             return true;
         }
+
+        else if (pos.z - this.z < -10){
+            world.remove(this.t);
+            return true;
+		}
     }
 }
 
@@ -250,6 +387,14 @@ function Ramp(x, y, z){
         }
     }
 
+    this.checkRemove = function(){
+    	var pos = world.getUserPosition();
+        if (pos.z - this.z < -10){
+            world.remove(this.b);
+            return true;
+        }
+	}
+
     this.userIsOnGround = function(){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
@@ -266,8 +411,8 @@ function Obstacle(x, y, z, texture) {
     this.y = y;
     this.z = z;
 
-    var selection = int(random(5));
-    var scale = random(1) + 1.5;
+    var selection = int(random(7));
+    var scale = random(1, 3);
 
     this.b = undefined;
     this.r = undefined;
@@ -291,49 +436,8 @@ function Obstacle(x, y, z, texture) {
             break;
 
         case 1:
-            this.b = new Cone({
-                x:x,
-                y:y,
-                z:z,
-                asset:texture,
-                scaleX: scale,
-                scaleY: scale,
-                scaleZ: scale,
-                radiusTop: 0,
-                radiusBottom: 1
-            });
-
-            world.add(this.b);
-            break;
-
-        case 2:
-            this.b = new Dodecahedron({
-                x:x,
-                y:y,
-                z:z,
-                asset:texture,
-                scaleX: scale,
-                scaleY: scale,
-                scaleZ: scale
-            });
-
-            world.add(this.b);
-            break;
-
-        case 3:
-            this.b = new Sphere({
-                x:x,
-                y:y,
-                z:z,
-                asset:texture,
-                scaleX: scale,
-                scaleY: scale,
-                scaleZ: scale
-            });
-
-            world.add(this.b);
-            break;
-
+        case 2: case 5:
+        case 3: case 6:
         case 4:
             this.b = new DAE({
             		asset: 'tree',
@@ -341,9 +445,9 @@ function Obstacle(x, y, z, texture) {
             		y:y,
             		z:z,
                 rotationX:-30,
-            		scaleX:1,
-            		scaleY:1,
-            		scaleZ:1,
+            		scaleX:scale,
+            		scaleY:scale,
+            		scaleZ:scale,
           	});
 
             world.add(this.b);
@@ -355,10 +459,16 @@ function Obstacle(x, y, z, texture) {
             var pos = world.getUserPosition();
             if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
                 world.remove(this.b);
+                hits++;
                 obstacleHit = true;
                 justHit = true;
                 return true;
             }
+
+            else if (pos.z - this.z < -10){
+            	world.remove(this.b);
+            	return true;
+			}
         }
     }
 }
@@ -366,9 +476,9 @@ function Obstacle(x, y, z, texture) {
 function addObjects(limit, start, tilt){
     var textures = ['iron', 'stone', 'gold'];
     // create lots of boxes
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < (start - limit)/4; i++) {
         // pick a location
-        var x = random(-45, 45);
+        var x = random(-37.5, 37.5);
         var z = random(limit, start);
         var y;
 
@@ -386,24 +496,26 @@ function addObjects(limit, start, tilt){
         var obstacle = new Obstacle(x, y, z, t);
         Obstacles.push(obstacle);
 
-        x = random(-45, 45);
-        z = random(limit, start);
+        if (i % 3 == 0){
+            x = random(-37.5, 37.5);
+            z = random(limit, start);
 
-        if (tilt == 1){
-            y = (125 * (section + 1) * -1) + 1;
-        }
+            if (tilt == 1){
+                y = (125 * (section + 1) * -1) + 1;
+            }
 
-        else{
-            y = z * tilt;
-        }
+            else{
+                y = z * tilt;
+            }
 
-        var c = new Coin(x, y ,z);
-        coins.push(c);
+            var c = new Coin(x, y ,z);
+            coins.push(c);
+		}
     }
 }
 
-function Ground(x, y, z, width, length, angle){
-    this.x = x;
+function Ground(offset, y, z, width, length, angle){
+    this.x = offset;
     this.y = y;
     this.z = z;
     this.id = 'ground';
@@ -416,7 +528,7 @@ function Ground(x, y, z, width, length, angle){
     this.prev = undefined;
 
     this.plane = new Plane({
-        x:x, y:y, z:z,
+        x:this.x, y:this.y, z:this.z,
         width:width, height:length,
         asset: 'snow',
         repeatX: width,
@@ -467,39 +579,6 @@ function Air(start, end){
 
     this.addGround = function(newGround){
         this.next = newGround;
-    }
-}
-
-function GroundMap(){
-    this.next = undefined;
-    this.length = 0;
-
-    this.addGround = function(newGround){
-        if (this.next === undefined){
-            this.next = newGround;
-            this.length += (newGround.upperBound - this.length);
-        }
-        else{
-            var temp = this.next;
-            while(temp.next !== undefined){
-                temp = temp.next;
-            }
-            newGround.prev = temp;
-            if (temp.id !== 'air'){
-                newGround.lowerBound = temp.upperBound;
-                temp.next = newGround;
-                temp.upperBound = newGround.lowerBound;
-                this.length += (newGround.upperBound - this.length);
-            }
-
-            else{
-                console.log("AIR");
-                temp.upperBound = newGround.lowerBound;
-                temp.next = newGround;
-                this.length += (newGround.upperBound - this.length);
-            }
-        }
-
     }
 }
 
