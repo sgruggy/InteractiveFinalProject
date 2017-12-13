@@ -45,7 +45,7 @@ function setup() {
     world = new World('VRScene');
 
     addObjects(worldEnd, 0, slope);
-    world.setUserPosition(0, 0.5, 0);
+    world.setUserPosition(0, 30, 50);
     // AddSection(section);
     p = new Ground(0, 0, 0, 100, 500, -120);
 
@@ -53,8 +53,8 @@ function setup() {
 }
 
 function draw() {
-    // document.getElementById("score").innerHTML = "Score: " + (score + bonus);
-    // document.getElementById("hits").innerHTML = "Hits: " + hits;
+    document.getElementById("score").innerHTML = "Score: " + (score + bonus);
+    document.getElementById("hits").innerHTML = "Hits: " + hits;
     var pos = world.getUserPosition();
 
     for (var i = 0; i < coins.length; i++){
@@ -88,7 +88,9 @@ function draw() {
 
 	if ((p.userIsOnGround() || p.userIsOverGround()) && !fallen){
         if (!rampHit && !obstacleHit){
-            zSpeed += 0.001;
+            if (zSpeed < 1.5) {
+              zSpeed += 0.001;
+            }
             ySpeed = zSpeed * slope;
             userY = pos.y - ySpeed;
 
@@ -161,7 +163,7 @@ function draw() {
 
 
     userZ = pos.z - zSpeed ;
-    // score = int(-userZ * 3);
+    score = int(-userZ * 3);
     world.setUserPosition(userX, userY, userZ);
     skySphereReference.elt.object3D.position.set(0, 0, userZ);
     p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
@@ -244,7 +246,7 @@ function Obstacle(x, y, z, texture) {
     this.y = y;
     this.z = z;
 
-    var selection = int(random(4));
+    var selection = int(random(5));
     var scale = random(1) + 1.5;
 
     this.b = undefined;
@@ -311,6 +313,21 @@ function Obstacle(x, y, z, texture) {
 
             world.add(this.b);
             break;
+
+        case 4:
+            this.b = new DAE({
+            		asset: 'tree',
+            		x:x,
+            		y:y,
+            		z:z,
+                rotationX:-30,
+            		scaleX:1,
+            		scaleY:1,
+            		scaleZ:1,
+          	});
+
+            world.add(this.b);
+            break;
     }
 
     this.checkHit = function(){
@@ -332,7 +349,7 @@ function addObjects(limit, start, tilt){
     // create lots of boxes
     for (var i = 0; i < 100; i++) {
         // pick a location
-        var x = random(-50, 50);
+        var x = random(-45, 45);
         var z = random(limit, start);
         var y;
 
@@ -350,7 +367,7 @@ function addObjects(limit, start, tilt){
         var obstacle = new Obstacle(x, y, z, t);
         Obstacles.push(obstacle);
 
-        x = random(-50, 50);
+        x = random(-45, 45);
         z = random(limit, start);
 
         if (tilt == 1){
