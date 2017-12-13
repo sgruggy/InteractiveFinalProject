@@ -371,7 +371,7 @@ function Obstacle(x, y, z, texture) {
     this.checkHit = function(){
         if (this.b !== undefined){
             var pos = world.getUserPosition();
-            if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
+            if (dist(this.x, this.z, pos.x,pos.z) < 1 && pos.y < this.y + 7){
                 world.remove(this.b);
                 hits++;
                 obstacleHit = true;
