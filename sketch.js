@@ -239,11 +239,6 @@ function draw() {
     var relativeZ = pos.z - this.z;
     var relativeGround = relativeZ * slope * -1 + this.y;
 
-    if (groundPointer.userIsOnGround()) {
-      goodSpot = pos;
-      console.log(goodSpot);
-    }
-
     if (hits >= 5 || pos.y + 2000 < groundPointer.y ) {
         state = 2;
     }
@@ -533,7 +528,11 @@ function startScreen() {
 function gameOver() {
   var div = document.getElementById("gameOver");
   div.style.display = 'block';
-  div.innerHTML = '<h1>Game Over <br> Score: ' + (score + bonus) + '</h1>';
+
+  var end = document.getElementById("end");
+  var finalScore = document.getElementById("finalScore");
+  end.innerHTML = "Game Over";
+  finalScore.innerHTML = "Score: " + (score + bonus);
 
   var scoreVar = document.getElementById("score");
   var hitVar = document.getElementById("hits");
