@@ -520,10 +520,6 @@ function mousePressed() {
   if (state == 0) {
     state = 1;
   }
-
-  else if (state == 2) {
-    state = 0;
-  }
 }
 
 function startScreen() {
@@ -531,19 +527,6 @@ function startScreen() {
 
   document.getElementById("start").style.display = 'block';
   div.style.display = 'none';
-  userX = 0;
-  userY = 0.2;
-  userZ = 0;
-  xSpeed = 0.002;
-  zSpeed = 0.1;
-  fallen = false;
-  rampHit = false;
-  obstacleHit = false;
-  justHit = false;
-  score = 0;
-  bonus = 0;
-  hits = 0;
-  world.setUserPosition(0, 0.5, 0);
 }
 
 function gameOver() {
