@@ -145,9 +145,7 @@ function draw() {
 
 	if ((groundPointer.userIsOnGround() || groundPointer.userIsOverGround()) && !fallen){
         if (!rampHit && !obstacleHit){
-            if (zSpeed < 1.5) {
-              zSpeed += 0.001;
-            }
+            zSpeed += 0.001;
             ySpeed = zSpeed * slope;
             userY = pos.y - ySpeed;
 
