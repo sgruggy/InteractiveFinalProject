@@ -8,15 +8,12 @@ var zSpeed = 0.1;
 var slope = 0.5773;
 var radicalThree = 1.73205080757;
 var ySpeed = zSpeed * slope;
-var sliding = false;
 var fallSpeed = 0.000001;
-var falling = false;
-var worldEnd = -1 * 125 * 1.73205080757;
+var worldEnd = -400;
 var coins = [];
 var Ramps = [];
 var Obstacles = [];
 var ground = [];
-var groundMap = [];
 var collectSound;
 var section = 0;
 var rampHit = false;
@@ -29,8 +26,15 @@ var hits = 0;
 var testMap = new GroundMap();
 var groundPointer;
 var p;
+var p2;
+var p3;
 var currentRamp;
 var fallen = false;
+var grounds = [];
+var groundEnd = 0;
+var groundDepth = 0;
+var groundPointer;
+var groundIndex = 0;
 
 function preload(){
     collectSound = loadSound("collect.mp3");
@@ -47,8 +51,21 @@ function setup() {
     addObjects(worldEnd, 0, slope);
     world.setUserPosition(0, 0.5, 0);
     // AddSection(section);
-    p = new Ground(0, 0, 0, 100, 500, -120);
+    p = new Ground(0, 0, 0, 75, 500, -120);
+    groundEnd -= (250 * radicalThree);
+    groundDepth -= (250);
+	p2 = new Ground(0, groundDepth, groundEnd, 75, 500, -120);
+	groundEnd -= (250 * radicalThree);
+	groundDepth -= 250;
+    p3 = new Ground(0, groundDepth , groundEnd, 75, 500, -120);
+    groundEnd -= (250 * radicalThree);
+    groundDepth -= (250);
 
+    grounds.push(p);
+    grounds.push(p2);
+    grounds.push(p3);
+
+    groundPointer = grounds[groundIndex];
     skySphereReference = select('#theSky');
 }
 
@@ -61,22 +78,24 @@ function draw() {
         if(coins[i].checkHit()){
             coins.splice(i, 1);
             i--;
-            bonus += 50;
-            collectSound.play();
         }
     }
 
-    for (var i = 0; i < Ramps.length; i++){
+    for (i = 0; i < Ramps.length; i++){
         if(Ramps[i].checkHit()){
             currentRamp = Ramps[i];
-        };
+        }
+
+        if(Ramps[i].checkRemove()){
+			Ramps.splice(i, 1);
+			i--;
+		}
     }
 
-    for (var i = 0; i < Obstacles.length; i++){
+    for (i = 0; i < Obstacles.length; i++){
         if (Obstacles[i].checkHit()){
             Obstacles.splice(i, 1);
             i--;
-            hits++;
         }
     }
 
@@ -86,13 +105,13 @@ function draw() {
     userX = pos.x - xMove;
     xSpeed = zSpeed / 50;
 
-	if ((p.userIsOnGround() || p.userIsOverGround()) && !fallen){
+	if ((groundPointer.userIsOnGround() || groundPointer.userIsOverGround()) && !fallen){
         if (!rampHit && !obstacleHit){
             zSpeed += 0.001;
             ySpeed = zSpeed * slope;
             userY = pos.y - ySpeed;
 
-            if(p.userIsAwayFromGround()){
+            if(groundPointer.userIsAwayFromGround()){
             	fallen = true;
 			      }
 
@@ -136,13 +155,13 @@ function draw() {
                 ySpeed = zSpeed * slope * -1 + fallSpeed;
                 fallSpeed += 0.01;
                 var currentGround = pos.z * slope + 0.5;
-                if (pos.y - ySpeed < currentGround && !p.userIsAwayFromGround()){
+                if (pos.y - ySpeed < currentGround && !groundPointer.userIsAwayFromGround()){
                     userY = currentGround;
                     rampHit = false;
                     fallSpeed = 0;
                 }
 
-                else if (pos.y - ySpeed < currentGround && p.userIsAwayFromGround()){
+                else if (pos.y - ySpeed < currentGround && groundPointer.userIsAwayFromGround()){
                 	fallen = true;
 				}
 
@@ -164,11 +183,13 @@ function draw() {
     // score = int(-userZ * 3);
     world.setUserPosition(userX, userY, userZ);
     skySphereReference.elt.object3D.position.set(0, 0, userZ);
-    p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
+    // p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
+    var relativeZ = pos.z - this.z;
+    var relativeGround = relativeZ * slope * -1 + this.y;
 
-    if (userZ <= worldEnd/2){
+    if (userZ <= worldEnd + 400){
         var temp = worldEnd;
-        worldEnd *= 2;
+        worldEnd -= 400;
         addObjects(worldEnd, temp, slope);
     }
 }
@@ -190,9 +211,16 @@ function Coin(x, y, z){
     	this.t.spinY(2);
         var pos = world.getUserPosition();
         if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
-            world.remove(this.t);
+            bonus += 50;
+            collectSound.play();
+            zSpeed += 0.005;
             return true;
         }
+
+        else if (pos.z - this.z < -10){
+            world.remove(this.t);
+            return true;
+		}
     }
 }
 
@@ -228,6 +256,14 @@ function Ramp(x, y, z){
         }
     }
 
+    this.checkRemove = function(){
+    	var pos = world.getUserPosition();
+        if (pos.z - this.z < -10){
+            world.remove(this.b);
+            return true;
+        }
+	}
+
     this.userIsOnGround = function(){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
@@ -244,7 +280,7 @@ function Obstacle(x, y, z, texture) {
     this.y = y;
     this.z = z;
 
-    var selection = int(random(4));
+    var selection = int(random(7));
     var scale = random(1) + 1.5;
 
     this.b = undefined;
@@ -268,7 +304,7 @@ function Obstacle(x, y, z, texture) {
             Ramps.push(this.r);
             break;
 
-        case 1:
+        case 1: case 4:
             this.b = new Cone({
                 x:x,
                 y:y,
@@ -284,7 +320,7 @@ function Obstacle(x, y, z, texture) {
             world.add(this.b);
             break;
 
-        case 2:
+        case 2: case 5:
             this.b = new Dodecahedron({
                 x:x,
                 y:y,
@@ -298,7 +334,7 @@ function Obstacle(x, y, z, texture) {
             world.add(this.b);
             break;
 
-        case 3:
+        case 3: case 6:
             this.b = new Sphere({
                 x:x,
                 y:y,
@@ -318,10 +354,16 @@ function Obstacle(x, y, z, texture) {
             var pos = world.getUserPosition();
             if (dist(this.x, this.y, this.z, pos.x, pos.y, pos.z) < 2){
                 world.remove(this.b);
+                hits++;
                 obstacleHit = true;
                 justHit = true;
                 return true;
             }
+
+            else if (pos.z - this.z < -10){
+            	world.remove(this.b);
+            	return true;
+			}
         }
     }
 }
@@ -330,9 +372,9 @@ function Obstacle(x, y, z, texture) {
 function addObjects(limit, start, tilt){
     var textures = ['iron', 'stone', 'gold'];
     // create lots of boxes
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < (start - limit)/3; i++) {
         // pick a location
-        var x = random(-50, 50);
+        var x = random(-37.5, 37.5);
         var z = random(limit, start);
         var y;
 
@@ -350,19 +392,21 @@ function addObjects(limit, start, tilt){
         var obstacle = new Obstacle(x, y, z, t);
         Obstacles.push(obstacle);
 
-        x = random(-50, 50);
-        z = random(limit, start);
+        if (i % 3 == 0){
+            x = random(-37.5, 37.5);
+            z = random(limit, start);
 
-        if (tilt == 1){
-            y = (125 * (section + 1) * -1) + 1;
-        }
+            if (tilt == 1){
+                y = (125 * (section + 1) * -1) + 1;
+            }
 
-        else{
-            y = z * tilt;
-        }
+            else{
+                y = z * tilt;
+            }
 
-        var c = new Coin(x, y ,z);
-        coins.push(c);
+            var c = new Coin(x, y ,z);
+            coins.push(c);
+		}
     }
 }
 
