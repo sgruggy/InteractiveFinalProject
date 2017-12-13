@@ -40,7 +40,7 @@ var hitSound;
 
 function preload(){
     collectSound = loadSound("collect.mp3");
-    hitSound = loadSound("hit.m3");
+    hitSound = loadSound("hit.mp3");
 }
 
 function setup() {
@@ -430,12 +430,12 @@ function addObjects(limit, start, offset){
         var obstacle = new Obstacle(x, y, z, t);
         Obstacles.push(obstacle);
 
-        if (i % 2 == 0){
+        if (i % 1 == 0){
             x = random(-37.5, 37.5) + offset;
             z = random(limit, start);
             var roll = random(1);
-            if (roll >= .75 || Math.abs(x) > 25){
-                y = z * slope + random(5) + 5;;
+            if (roll >= .6 || Math.abs(x) > 25){
+                y = z * slope + random(10) + 5;;
                 var c = new Coin(x, y ,z, true);
                 coins.push(c);
             }
