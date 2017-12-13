@@ -286,6 +286,7 @@ function Coin(x, y, z, diamond){
             zSpeed += 0.005;
             if (this.diamond){
                 fallSpeed -= 1;
+                zSpeed += 0.05;
             }
             return true;
         }
@@ -399,7 +400,7 @@ function Obstacle(x, y, z, texture) {
     this.checkHit = function(){
         if (this.b !== undefined){
             var pos = world.getUserPosition();
-            if (dist(this.x, this.z, pos.x,pos.z) < 1 && pos.y < this.y + 7){
+            if (dist(this.x, this.z, pos.x,pos.z) < 1 && pos.y < this.y + 10){
                 world.remove(this.b);
                 hits++;
                 hitSound.play();
@@ -434,7 +435,7 @@ function addObjects(limit, start, offset){
             x = random(-37.5, 37.5) + offset;
             z = random(limit, start);
             var roll = random(1);
-            if (roll >= .6 || Math.abs(x) > 25){
+            if (roll >= .6 || Math.abs(x) > 25 + offset){
                 y = z * slope + random(10) + 5;;
                 var c = new Coin(x, y ,z, true);
                 coins.push(c);
