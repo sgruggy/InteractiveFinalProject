@@ -29,6 +29,7 @@ var p2;
 var p3;
 var currentRamp;
 var fallen = false;
+var state = 0;
 var grounds = [];
 var groundEnd = 0;
 var groundDepth = 0;
