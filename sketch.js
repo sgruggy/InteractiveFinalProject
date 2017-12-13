@@ -23,7 +23,6 @@ var angle;
 var score = 0;
 var bonus = 0;
 var hits = 0;
-var testMap = new GroundMap();
 var groundPointer;
 var p;
 var p2;
@@ -35,6 +34,7 @@ var groundEnd = 0;
 var groundDepth = 0;
 var groundPointer;
 var groundIndex = 0;
+var xOff = 0.0;
 
 function preload(){
     collectSound = loadSound("collect.mp3");
@@ -43,23 +43,41 @@ function preload(){
 function setup() {
     // no canvas needed
     noCanvas();
+    noiseDetail(24);
 
     // construct the A-Frame world
     // this function requires a reference to the ID of the 'a-scene' tag in our HTML document
     world = new World('VRScene');
 
-    addObjects(worldEnd, 0, slope);
-    world.setUserPosition(0, 30, 50);
+    // addObjects(worldEnd, 0, slope);
+    world.setUserPosition(0, 0.5, 0);
     // AddSection(section);
-    p = new Ground(0, 0, 0, 75, 500, -120);
-    groundEnd -= (250 * radicalThree);
-    groundDepth -= (250);
-	p2 = new Ground(0, groundDepth, groundEnd, 75, 500, -120);
-	groundEnd -= (250 * radicalThree);
-	groundDepth -= 250;
-    p3 = new Ground(0, groundDepth , groundEnd, 75, 500, -120);
-    groundEnd -= (250 * radicalThree);
-    groundDepth -= (250);
+    var offSet = noise(xOff) * 10;
+    var r = map(offSet, 0, 10, -50, 50);
+    xOff += 1;
+    p = new Ground(0, 0, 0, 50, 50, -120);
+    var temp = groundEnd;
+    groundEnd -= (25 * radicalThree);
+    addObjects(groundEnd, temp, slope);
+    groundDepth -= (25);
+
+    offSet = noise(xOff) * 10;
+    r = map(offSet, 0, 10, -50, 50);
+    xOff += 1;
+	p2 = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
+    temp = groundEnd;
+    groundEnd -= (25 * radicalThree);
+    addObjects(groundEnd, temp, slope);
+	groundDepth -= 25;
+
+    offSet = noise(xOff) * 10;
+    r = map(offSet, 0, 10, -50, 50);
+    xOff += 1;
+    p3 = new Ground(r, groundDepth , groundEnd, 50, 50, -120);
+    temp = groundEnd;
+    groundEnd -= (25 * radicalThree);
+    addObjects(groundEnd, temp, slope);
+    groundDepth -= (25);
 
     grounds.push(p);
     grounds.push(p2);
@@ -73,6 +91,25 @@ function draw() {
     document.getElementById("score").innerHTML = "Score: " + (score + bonus);
     document.getElementById("hits").innerHTML = "Hits: " + hits;
     var pos = world.getUserPosition();
+
+    if (groundPointer.z - pos.z >= 12.5 * radicalThree){
+        groundIndex++;
+        console.log(groundIndex);
+        groundPointer = grounds[groundIndex];
+    }
+
+    if ((pos.z/2) * radicalThree <= groundEnd + 800){
+        // world.remove(groundPointer.plane);
+        offSet = noise(xOff) * 10;
+        r = map(offSet, 0, 10, -50, 50);
+        xOff += 1;
+        var next = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
+        grounds.push(next);
+        var temp = groundEnd;
+        groundEnd -= (25 * radicalThree);
+        addObjects(groundEnd, temp, slope);
+        groundDepth -= (25);
+    }
 
     for (var i = 0; i < coins.length; i++){
         if(coins[i].checkHit()){
@@ -188,12 +225,6 @@ function draw() {
     // p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
     var relativeZ = pos.z - this.z;
     var relativeGround = relativeZ * slope * -1 + this.y;
-
-    if (userZ <= worldEnd + 400){
-        var temp = worldEnd;
-        worldEnd -= 400;
-        addObjects(worldEnd, temp, slope);
-    }
 }
 
 function Coin(x, y, z){
@@ -283,7 +314,7 @@ function Obstacle(x, y, z, texture) {
     this.z = z;
 
     var selection = int(random(7));
-    var scale = random(1) + 1.5;
+    var scale = random(1, 3);
 
     this.b = undefined;
     this.r = undefined;
@@ -316,9 +347,9 @@ function Obstacle(x, y, z, texture) {
             		y:y,
             		z:z,
                 rotationX:-30,
-            		scaleX:1,
-            		scaleY:1,
-            		scaleZ:1,
+            		scaleX:scale,
+            		scaleY:scale,
+            		scaleZ:scale,
           	});
 
             world.add(this.b);
@@ -348,7 +379,7 @@ function Obstacle(x, y, z, texture) {
 function addObjects(limit, start, tilt){
     var textures = ['iron', 'stone', 'gold'];
     // create lots of boxes
-    for (var i = 0; i < (start - limit)/3; i++) {
+    for (var i = 0; i < (start - limit)/4; i++) {
         // pick a location
         var x = random(-37.5, 37.5);
         var z = random(limit, start);
@@ -386,8 +417,8 @@ function addObjects(limit, start, tilt){
     }
 }
 
-function Ground(x, y, z, width, length, angle){
-    this.x = x;
+function Ground(offset, y, z, width, length, angle){
+    this.x = offset;
     this.y = y;
     this.z = z;
     this.id = 'ground';
@@ -400,7 +431,7 @@ function Ground(x, y, z, width, length, angle){
     this.prev = undefined;
 
     this.plane = new Plane({
-        x:x, y:y, z:z,
+        x:this.x, y:this.y, z:this.z,
         width:width, height:length,
         asset: 'snow',
         repeatX: width,
@@ -451,39 +482,6 @@ function Air(start, end){
 
     this.addGround = function(newGround){
         this.next = newGround;
-    }
-}
-
-function GroundMap(){
-    this.next = undefined;
-    this.length = 0;
-
-    this.addGround = function(newGround){
-        if (this.next === undefined){
-            this.next = newGround;
-            this.length += (newGround.upperBound - this.length);
-        }
-        else{
-            var temp = this.next;
-            while(temp.next !== undefined){
-                temp = temp.next;
-            }
-            newGround.prev = temp;
-            if (temp.id !== 'air'){
-                newGround.lowerBound = temp.upperBound;
-                temp.next = newGround;
-                temp.upperBound = newGround.lowerBound;
-                this.length += (newGround.upperBound - this.length);
-            }
-
-            else{
-                console.log("AIR");
-                temp.upperBound = newGround.lowerBound;
-                temp.next = newGround;
-                this.length += (newGround.upperBound - this.length);
-            }
-        }
-
     }
 }
 
