@@ -59,7 +59,7 @@ function setup() {
     p = new Ground(0, 0, 0, 50, 50, -120);
     var temp = groundEnd;
     groundEnd -= (25 * radicalThree);
-    addObjects(groundEnd, temp, slope);
+    addObjects(groundEnd + (12.5 * radicalThree), temp, 0);
     groundDepth -= (25);
 
     offSet = noise(xOff) * 10;
@@ -68,7 +68,7 @@ function setup() {
 	p2 = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
     temp = groundEnd;
     groundEnd -= (25 * radicalThree);
-    addObjects(groundEnd, temp, slope);
+    addObjects(groundEnd + (12.5 * radicalThree) , temp, r);
 	groundDepth -= 25;
 
     offSet = noise(xOff) * 10;
@@ -77,7 +77,7 @@ function setup() {
     p3 = new Ground(r, groundDepth , groundEnd, 50, 50, -120);
     temp = groundEnd;
     groundEnd -= (25 * radicalThree);
-    addObjects(groundEnd, temp, slope);
+    addObjects(groundEnd + (12.5 * radicalThree), temp, r);
     groundDepth -= (25);
 
     grounds.push(p);
@@ -89,101 +89,60 @@ function setup() {
 }
 
 function draw() {
+    document.getElementById("score").innerHTML = "Score: " + (score + bonus);
+    document.getElementById("hits").innerHTML = "Hits: " + hits;
+    var pos = world.getUserPosition();
 
-      var scoreVar = document.getElementById("score");
-      var hitVar = document.getElementById("hits");
-      scoreVar.style.display = "block";
-      scoreVar.innerHTML = "Score: " + (score + bonus);
-      hitVar.style.display = "block";
-      hitVar.innerHTML = "Hits: " + hits;
-
-      var pos = world.getUserPosition();
-
-      if (groundPointer.z - pos.z >= 12.5 * radicalThree){
-          groundIndex++;
-          console.log(groundIndex);
-          groundPointer = grounds[groundIndex];
-      }
-
-      if ((pos.z/2) * radicalThree <= groundEnd + 800){
-          // world.remove(groundPointer.plane);
-          offSet = noise(xOff) * 10;
-          r = map(offSet, 0, 10, -50, 50);
-          xOff += 1;
-          var next = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
-          grounds.push(next);
-          var temp = groundEnd;
-          groundEnd -= (25 * radicalThree);
-          addObjects(groundEnd, temp, slope);
-          groundDepth -= (25);
-      }
-
-      for (var i = 0; i < coins.length; i++){
-          if(coins[i].checkHit()){
-              coins.splice(i, 1);
-              i--;
-          }
-      }
-
-      for (i = 0; i < Ramps.length; i++){
-          if(Ramps[i].checkHit()){
-              currentRamp = Ramps[i];
-          }
-
-          if(Ramps[i].checkRemove()){
-  			Ramps.splice(i, 1);
-  			i--;
-  		}
-      }
-
-      for (i = 0; i < Obstacles.length; i++){
-          if (Obstacles[i].checkHit()){
-              Obstacles.splice(i, 1);
-              i--;
-          }
-      }
-      // var pos = world.getUserPosition();
-      //
-      // for (var i = 0; i < coins.length; i++){
-      //     if(coins[i].checkHit()){
-      //         coins.splice(i, 1);
-      //         i--;
-      //         bonus += 50;
-      //         collectSound.play();
-      //     }
-      // }
-      //
-      // for (var i = 0; i < Ramps.length; i++){
-      //     if(Ramps[i].checkHit()){
-      //         currentRamp = Ramps[i];
-      //     };
-      // }
-      //
-      // for (var i = 0; i < Obstacles.length; i++){
-      //     if (Obstacles[i].checkHit()){
-      //         Obstacles.splice(i, 1);
-      //         i--;
-      //         hits++;
-      //     }
-      // }
-
-      var xRotation = world.getUserRotation().y;
-      var xMove = xSpeed * xRotation;
-
-// <<<<<<< HEAD
-      userX = pos.x - xMove;
-      xSpeed = zSpeed / 50;
-
-  	if ((p.userIsOnGround() || p.userIsOverGround()) && !fallen){
-          if (!rampHit && !obstacleHit){
-              if (zSpeed < 1.5) {
-                zSpeed += 0.001;
-              }
-              ySpeed = zSpeed * slope;
-              userY = pos.y - ySpeed;
+    if (groundPointer.z - pos.z >= 12.5 * radicalThree){
+        groundIndex++;
+        console.log(groundIndex);
+        groundPointer = grounds[groundIndex];
     }
-  }
-// =======
+
+    if ((pos.z/2) * radicalThree <= groundEnd + 800){
+        // world.remove(groundPointer.plane);
+        var offSet = noise(xOff) * 10;
+        var r = map(offSet, 0, 10, -50, 50);
+        xOff += 1;
+        var next = new Ground(r, groundDepth, groundEnd, 50, 50, -120);
+        grounds.push(next);
+        var temp = groundEnd;
+        groundEnd -= (25 * radicalThree);
+        addObjects(groundEnd + (12.5 * radicalThree), temp, r);
+        groundDepth -= (25);
+    }
+
+    for (var i = 0; i < coins.length; i++){
+        if(coins[i].checkHit()){
+            coins.splice(i, 1);
+            i--;
+        }
+    }
+
+    for (i = 0; i < Ramps.length; i++){
+        if(Ramps[i].checkHit()){
+            currentRamp = Ramps[i];
+        }
+
+        if(Ramps[i].checkRemove()){
+			Ramps.splice(i, 1);
+			i--;
+		}
+    }
+
+    for (i = 0; i < Obstacles.length; i++){
+        if (Obstacles[i].checkHit()){
+            Obstacles.splice(i, 1);
+            i--;
+        }
+    }
+
+    var xRotation = world.getUserRotation().y;
+    var xMove = xSpeed * xRotation;
+
+    userX = pos.x - xMove;
+    xSpeed = zSpeed / 50;
+
 	if ((groundPointer.userIsOnGround() || groundPointer.userIsOverGround()) && !fallen){
         if (!rampHit && !obstacleHit){
             if (zSpeed < 1.5) {
@@ -196,68 +155,42 @@ function draw() {
             	fallen = true;
 			      }
 
-              if(p.userIsAwayFromGround()){
-              	fallen = true;
-  			      }
+        }
 
+        else if (!rampHit) {
+          console.log(justHit);
+          if (justHit) {
+            zSpeed *= 0.5;
+            angle = random(-.5,.5);
+            ySpeed = zSpeed * slope * random(.5, .75);
+            userY = pos.y - ySpeed;
+            justHit = false;
           }
 
-          else if (!rampHit) {
-            console.log(justHit);
-            if (justHit) {
-              zSpeed *= 0.5;
-              angle = random(-.5,.5);
-              ySpeed = zSpeed * slope * random(.5, .75);
-              userY = pos.y - ySpeed;
-              justHit = false;
+          else {
+            xMove = zSpeed / 50 + angle;
+            userX = userX - xMove;
+            ySpeed = zSpeed * slope * -1 + fallSpeed;
+            fallSpeed += 0.01;
+            var currentGround = pos.z * slope + 0.5;
+            if (pos.y - ySpeed < currentGround){
+                userY = currentGround;
+                obstacleHit = false;
+                fallSpeed = 0;
             }
-
-            else {
-              xMove = zSpeed / 50 + angle;
-              userX = userX - xMove;
-              ySpeed = zSpeed * slope * -1 + fallSpeed;
-              fallSpeed += 0.01;
-              var currentGround = pos.z * slope + 0.5;
-              if (pos.y - ySpeed < currentGround){
-                  userY = currentGround;
-                  obstacleHit = false;
-                  fallSpeed = 0;
-              }
-              else{
-                  userY = pos.y - ySpeed;
-              }
+            else{
+                userY = pos.y - ySpeed;
             }
           }
+        }
 
-// <<<<<<< HEAD
-//           else{
-//               if(currentRamp.userIsOnGround()){
-//                   zSpeed -= 0.001;
-//                   ySpeed = zSpeed * slope * -1;
-//                   userY = pos.y - ySpeed;
-//               }
-//
-//               else{
-//                   ySpeed = zSpeed * slope * -1 + fallSpeed;
-//                   fallSpeed += 0.01;
-//                   var currentGround = pos.z * slope + 0.5;
-//                   if (pos.y - ySpeed < currentGround && !p.userIsAwayFromGround()){
-//                       userY = currentGround;
-//                       rampHit = false;
-//                       fallSpeed = 0;
-//                   }
-//
-//                   else if (pos.y - ySpeed < currentGround && p.userIsAwayFromGround()){
-//                   	fallen = true;
-//   				}
-//
-//                   else{
-//                       userY = pos.y - ySpeed;
-//                   }
-//               }
-//           }
-//   	}
-// =======
+        else{
+            if(currentRamp.userIsOnGround()){
+                zSpeed -= 0.001;
+                ySpeed = zSpeed * slope * -1;
+                userY = pos.y - ySpeed;
+            }
+
             else{
                 ySpeed = zSpeed * slope * -1 + fallSpeed;
                 fallSpeed += 0.01;
@@ -277,46 +210,43 @@ function draw() {
                 }
             }
         }
+	}
 
-  	else {
-  		ySpeed += fallSpeed;
-  		fallSpeed += 0.001;
-  		userY = pos.y - ySpeed;
-  	}
+	else{
+		ySpeed += fallSpeed;
+		fallSpeed += 0.001;
+		userY = pos.y - ySpeed;
+	}
 
 
     userZ = pos.z - zSpeed ;
     score = int(-userZ * 3);
     world.setUserPosition(userX, userY, userZ);
     skySphereReference.elt.object3D.position.set(0, 0, userZ);
-
+    // p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
     var relativeZ = pos.z - this.z;
     var relativeGround = relativeZ * slope * -1 + this.y;
-// <<<<<<< HEAD
-    // p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
-    //
-    // if (userZ <= worldEnd/2){
-    //     var temp = worldEnd;
-    //     worldEnd *= 2;
-    //     addObjects(worldEnd, temp, slope);
-    // }
-
-
-
-// =======
-    // p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
 }
 
-function Coin(x, y, z){
+function Coin(x, y, z, diamond){
     this.x = x;
     this.y = y+1;
     this.z = z;
+    this.diamond = diamond;
+    this.texture = undefined;
+
+    if (this.diamond){
+        this.texture = 'diamond';
+    }
+    else{
+        this.texture = 'gold';
+    }
 
     this.t = new Torus({
         x:this.x,
         y:this.y,
         z:this.z,
-        asset:'gold'
+        asset:this.texture
     });
 
     world.add(this.t);
@@ -327,6 +257,9 @@ function Coin(x, y, z){
             bonus += 50;
             collectSound.play();
             zSpeed += 0.005;
+            if (this.diamond){
+                fallSpeed -= 1;
+            }
             return true;
         }
 
@@ -381,7 +314,7 @@ function Ramp(x, y, z){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope * -1 + this.y;
-        return (Math.abs(pos.x - this.x) <= width/2 &&
+        return (Math.abs(pos.x - this.x) <= (width/2 + 3) &&
             Math.abs(pos.y - (relativeGround)) <= 2 &&
             Math.abs(pos.z - this.z) <= this.length/2
         )
@@ -455,43 +388,35 @@ function Obstacle(x, y, z, texture) {
     }
 }
 
-function addObjects(limit, start, tilt){
+
+function addObjects(limit, start, offset){
     var textures = ['iron', 'stone', 'gold'];
     // create lots of boxes
     for (var i = 0; i < (start - limit)/4; i++) {
         // pick a location
-        var x = random(-37.5, 37.5);
+        var x = random(-22.5, 22.5) + offset;
         var z = random(limit, start);
-        var y;
-
-        if (tilt == 1){
-            y = (125 * (section) * -1);
-        }
-
-        else{
-            y = z * tilt;
-        }
-
+        var y = z * slope;
         // pick a random texture
         var t = textures[ int(random(textures.length-1)) ];
 
         var obstacle = new Obstacle(x, y, z, t);
         Obstacles.push(obstacle);
 
-        if (i % 3 == 0){
-            x = random(-37.5, 37.5);
+        if (i % 2 == 0){
+            x = random(-37.5, 37.5) + offset;
             z = random(limit, start);
-
-            if (tilt == 1){
-                y = (125 * (section + 1) * -1) + 1;
+            var roll = random(1);
+            if (roll >= .75 || Math.abs(x) > 25){
+                y = z * slope + random(5) + 5;;
+                var c = new Coin(x, y ,z, true);
+                coins.push(c);
             }
-
             else{
-                y = z * tilt;
+                y = z * slope;
+                var c = new Coin(x, y ,z, false);
+                coins.push(c);
             }
-
-            var c = new Coin(x, y ,z);
-            coins.push(c);
 		}
     }
 }
@@ -525,7 +450,7 @@ function Ground(offset, y, z, width, length, angle){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope + this.y;
-        return (Math.abs(pos.x - this.x) <= this.width/2 &&
+        return (Math.abs(pos.x - this.x) <= this.width/2 + 3 &&
 				Math.abs(pos.y - relativeGround) <= .51 &&
             Math.abs(pos.z - this.z) <= this.plane.getHeight()/2
         );
@@ -540,7 +465,7 @@ function Ground(offset, y, z, width, length, angle){
 
 	this.userIsAwayFromGround = function(){
         var pos = world.getUserPosition();
-        return !(Math.abs(pos.x - this.x) <= this.width/2);
+        return !(Math.abs(pos.x - this.x) <= this.width/2 + 3);
     }
 
     this.addGround = function(newGround){
