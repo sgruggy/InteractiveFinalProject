@@ -89,8 +89,20 @@ function setup() {
 }
 
 function draw() {
-    document.getElementById("score").innerHTML = "Score: " + (score + bonus);
-    document.getElementById("hits").innerHTML = "Hits: " + hits;
+  if (state == 0) {
+    startScreen();
+  }
+
+
+  else if (state == 1) {
+    document.getElementById("start").style.display = 'none';
+    var scoreVar = document.getElementById("score");
+    var hitVar = document.getElementById("hits");
+    scoreVar.style.display = 'block';
+    hitVar.style.display = 'block';
+    scoreVar.innerHTML = "Score: " + (score + bonus);
+    hitVar.innerHTML = "Hits: " + hits;
+
     var pos = world.getUserPosition();
 
     if (groundPointer.z - pos.z >= 12.5 * radicalThree){
@@ -226,6 +238,21 @@ function draw() {
     // p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
     var relativeZ = pos.z - this.z;
     var relativeGround = relativeZ * slope * -1 + this.y;
+
+    if (groundPointer.userIsOnGround()) {
+      goodSpot = pos;
+      console.log(goodSpot);
+    }
+
+    if (hits >= 5 || fallen) {
+        state = 2;
+    }
+  }
+
+
+  else if (state == 2) {
+    gameOver();
+  }
 }
 
 function Coin(x, y, z, diamond){
@@ -388,7 +415,6 @@ function Obstacle(x, y, z, texture) {
     }
 }
 
-
 function addObjects(limit, start, offset){
     var textures = ['iron', 'stone', 'gold'];
     // create lots of boxes
@@ -514,4 +540,45 @@ function AddSection(section) {
     // air.upperBound = nextGround.lowerBound;
 
     Ramps.push(test);
+}
+
+function mousePressed() {
+  if (state == 0) {
+    state = 1;
+  }
+
+  else if (state == 2) {
+    state = 0;
+  }
+}
+
+function startScreen() {
+  var div = document.getElementById("gameOver");
+
+  document.getElementById("start").style.display = 'block';
+  div.style.display = 'none';
+  userX = 0;
+  userY = 0.2;
+  userZ = 0;
+  xSpeed = 0.002;
+  zSpeed = 0.1;
+  fallen = false;
+  rampHit = false;
+  obstacleHit = false;
+  justHit = false;
+  score = 0;
+  bonus = 0;
+  hits = 0;
+  world.setUserPosition(0, 0.5, 0);
+}
+
+function gameOver() {
+  var div = document.getElementById("gameOver");
+  div.style.display = 'block';
+  div.innerHTML = 'Game Over\nScore: ' + (score + bonus);
+
+  var scoreVar = document.getElementById("score");
+  var hitVar = document.getElementById("hits");
+  scoreVar.style.display = 'none';
+  hitVar.style.display = 'none';
 }
