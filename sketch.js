@@ -474,7 +474,7 @@ function Ground(offset, y, z, width, length, angle){
         var pos = world.getUserPosition();
         var relativeZ = pos.z - this.z;
         var relativeGround = relativeZ * slope + this.y;
-        return (Math.abs(pos.x - this.x) <= this.width/2 + 3 &&
+        return (Math.abs(pos.x - this.x) <= this.width/2 + 1 &&
 				Math.abs(pos.y - relativeGround) <= .51 &&
             Math.abs(pos.z - this.z) <= this.plane.getHeight()/2
         );
@@ -489,7 +489,7 @@ function Ground(offset, y, z, width, length, angle){
 
 	this.userIsAwayFromGround = function(){
         var pos = world.getUserPosition();
-        return !(Math.abs(pos.x - this.x) <= this.width/2 + 3);
+        return !(Math.abs(pos.x - this.x) <= this.width/2 + 1);
     }
 
     this.addGround = function(newGround){
@@ -511,33 +511,6 @@ function Air(start, end){
     this.addGround = function(newGround){
         this.next = newGround;
     }
-}
-
-function AddSection(section) {
-    testGround = new Ground(0, -300 * section, testMap.length, 100, 500, -120);
-    testMap.addGround(testGround);
-    groundPointer = testMap.next;
-
-    // var nextGround = new Ground(0, -300, section * -600, 100, 500, -120);
-
-    // testRamp = (0, -125, worldEnd-2, )
-    var test = new Ramp(
-        0, -300 * section + -125, testMap.length - (2 * (section + 1)), 60, 50
-    );
-    test.lowerBound = testGround.upperBound;
-    // groundPointer.next = test;
-    testMap.addGround(test);
-    // test.prev = groundPointer;
-    // groundPointer.next.prev = groundPointer;
-
-    var air = new Air(test.upperBound, testMap.length + -300);
-    // groundPointer.next.next = air;
-    testMap.addGround(air);
-    // air.prev = groundPointer.next;
-    // air.next = nextGround;
-    // air.upperBound = nextGround.lowerBound;
-
-    Ramps.push(test);
 }
 
 function mousePressed() {
@@ -573,7 +546,7 @@ function startScreen() {
 function gameOver() {
   var div = document.getElementById("gameOver");
   div.style.display = 'block';
-  div.innerHTML = 'Game Over\nScore: ' + (score + bonus);
+  div.innerHTML = '<h1>Game Over <br> Score: ' + (score + bonus) + '</h1>';
 
   var scoreVar = document.getElementById("score");
   var hitVar = document.getElementById("hits");
