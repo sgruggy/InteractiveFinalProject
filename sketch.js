@@ -36,9 +36,11 @@ var groundDepth = 0;
 var groundPointer;
 var groundIndex = 0;
 var xOff = 0.0;
+var hitSound;
 
 function preload(){
     collectSound = loadSound("collect.mp3");
+    hitSound = loadSound("hit.m3");
 }
 
 function setup() {
@@ -400,6 +402,7 @@ function Obstacle(x, y, z, texture) {
             if (dist(this.x, this.z, pos.x,pos.z) < 1 && pos.y < this.y + 7){
                 world.remove(this.b);
                 hits++;
+                hitSound.play();
                 obstacleHit = true;
                 justHit = true;
                 return true;
