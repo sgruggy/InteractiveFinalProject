@@ -49,7 +49,7 @@ function setup() {
     world = new World('VRScene');
 
     addObjects(worldEnd, 0, slope);
-    world.setUserPosition(0, 0.5, 0);
+    world.setUserPosition(0, 30, 50);
     // AddSection(section);
     p = new Ground(0, 0, 0, 75, 500, -120);
     groundEnd -= (250 * radicalThree);
@@ -70,8 +70,8 @@ function setup() {
 }
 
 function draw() {
-    // document.getElementById("score").innerHTML = "Score: " + (score + bonus);
-    // document.getElementById("hits").innerHTML = "Hits: " + hits;
+    document.getElementById("score").innerHTML = "Score: " + (score + bonus);
+    document.getElementById("hits").innerHTML = "Hits: " + hits;
     var pos = world.getUserPosition();
 
     for (var i = 0; i < coins.length; i++){
@@ -107,7 +107,9 @@ function draw() {
 
 	if ((groundPointer.userIsOnGround() || groundPointer.userIsOverGround()) && !fallen){
         if (!rampHit && !obstacleHit){
-            zSpeed += 0.001;
+            if (zSpeed < 1.5) {
+              zSpeed += 0.001;
+            }
             ySpeed = zSpeed * slope;
             userY = pos.y - ySpeed;
 
@@ -180,7 +182,7 @@ function draw() {
 
 
     userZ = pos.z - zSpeed ;
-    // score = int(-userZ * 3);
+    score = int(-userZ * 3);
     world.setUserPosition(userX, userY, userZ);
     skySphereReference.elt.object3D.position.set(0, 0, userZ);
     // p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
@@ -304,46 +306,20 @@ function Obstacle(x, y, z, texture) {
             Ramps.push(this.r);
             break;
 
-        case 1: case 4:
-            this.b = new Cone({
-                x:x,
-                y:y,
-                z:z,
-                asset:texture,
-                scaleX: scale,
-                scaleY: scale,
-                scaleZ: scale,
-                radiusTop: 0,
-                radiusBottom: 1
-            });
-
-            world.add(this.b);
-            break;
-
+        case 1:
         case 2: case 5:
-            this.b = new Dodecahedron({
-                x:x,
-                y:y,
-                z:z,
-                asset:texture,
-                scaleX: scale,
-                scaleY: scale,
-                scaleZ: scale
-            });
-
-            world.add(this.b);
-            break;
-
         case 3: case 6:
-            this.b = new Sphere({
-                x:x,
-                y:y,
-                z:z,
-                asset:texture,
-                scaleX: scale,
-                scaleY: scale,
-                scaleZ: scale
-            });
+        case 4:
+            this.b = new DAE({
+            		asset: 'tree',
+            		x:x,
+            		y:y,
+            		z:z,
+                rotationX:-30,
+            		scaleX:1,
+            		scaleY:1,
+            		scaleZ:1,
+          	});
 
             world.add(this.b);
             break;

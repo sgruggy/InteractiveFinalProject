@@ -2,7 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd08e329-2985-49a4-8e5c-bf06f78813a7" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/Example.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/bark.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/leaves.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/tree.3ds" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/tree.blend" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/tree.fbx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/tree.dae" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/tree.mtl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/LowPolyTree/tree.obj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sketch.js" afterPath="$PROJECT_DIR$/sketch.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +28,13 @@
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="216">
-              <caret line="8" column="0" lean-forward="true" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-              <folding />
+              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding>
+                <marker date="1513157064516" expanded="true" signature="783:861" ph="{...}" />
+                <marker date="1513157064516" expanded="true" signature="2178:2193" ph="..." />
+                <marker date="1513157064516" expanded="true" signature="2178:2277" ph="..." />
+                <marker date="1513157064516" expanded="true" signature="2178:2287" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -27,8 +42,8 @@
       <file leaf-file-name="sketch.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/sketch.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="161" column="17" lean-forward="true" selection-start-line="161" selection-start-column="17" selection-end-line="161" selection-end-column="17" />
+            <state relative-caret-position="851">
+              <caret line="331" column="21" lean-forward="false" selection-start-line="331" selection-start-column="21" selection-end-line="331" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -213,12 +228,12 @@
       <option name="presentableId" value="Default" />
       <updated>1512259482734</updated>
       <workItem from="1512259484397" duration="12771000" />
-      <workItem from="1512363345546" duration="89140000" />
+      <workItem from="1512363345546" duration="89944000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="101911000" />
+    <option name="totallyTimeSpent" value="102715000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="41" width="1938" height="1048" extended-state="6" />
@@ -267,7 +282,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1513157064516" expanded="true" signature="783:861" ph="{...}" />
+            <marker date="1513157064516" expanded="true" signature="2178:2193" ph="..." />
+            <marker date="1513157064516" expanded="true" signature="2178:2277" ph="..." />
+            <marker date="1513157064516" expanded="true" signature="2178:2287" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -306,15 +326,20 @@
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
-          <caret line="8" column="0" lean-forward="true" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding />
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding>
+            <marker date="1513157064516" expanded="true" signature="783:861" ph="{...}" />
+            <marker date="1513157064516" expanded="true" signature="2178:2193" ph="..." />
+            <marker date="1513157064516" expanded="true" signature="2178:2277" ph="..." />
+            <marker date="1513157064516" expanded="true" signature="2178:2287" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sketch.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="161" column="17" lean-forward="true" selection-start-line="161" selection-start-column="17" selection-end-line="161" selection-end-column="17" />
+        <state relative-caret-position="851">
+          <caret line="331" column="21" lean-forward="false" selection-start-line="331" selection-start-column="21" selection-end-line="331" selection-end-column="21" />
           <folding />
         </state>
       </provider>
