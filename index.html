@@ -24,6 +24,20 @@
 				margin: 0;
 			}
 
+			#start {
+				width: 1500px;
+				height: 800px;
+				z-index: 2000;
+				background-color: azure;
+			}
+
+			#gameOver {
+				width: 1500px;
+				height: 800px;
+				z-index: 1000;
+				display: none;
+			}
+
 			#score {
 				z-index: 1000;
 				position: absolute;
@@ -31,6 +45,7 @@
 				left: 0px;
 				padding: 5px;
 				background-color: azure;
+				display: none;
 			}
 
 			#hits {
@@ -40,6 +55,7 @@
 				padding: 5px;
 				left: 0px;
 				background-color: lightgreen;
+				display: none;
 			}
 		</style>
 	</head>
@@ -50,6 +66,14 @@
 
 		<div id="hits">
 			Hits: 0
+		</div>
+
+		<div id="start">
+			Click to start
+		</div>
+
+		<div id="gameOver">
+			Game Over
 		</div>
 		<!-- container to hold our VR scene - make sure to give this element an ID of 'VRScene' -->
 	    <a-scene id="VRScene">

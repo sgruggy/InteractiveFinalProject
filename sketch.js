@@ -31,6 +31,7 @@ var groundPointer;
 var p;
 var currentRamp;
 var fallen = false;
+var state = 0;
 
 function preload(){
     collectSound = loadSound("collect.mp3");
@@ -53,117 +54,127 @@ function setup() {
 }
 
 function draw() {
-    document.getElementById("score").innerHTML = "Score: " + (score + bonus);
-    document.getElementById("hits").innerHTML = "Hits: " + hits;
-    var pos = world.getUserPosition();
-
-    for (var i = 0; i < coins.length; i++){
-        if(coins[i].checkHit()){
-            coins.splice(i, 1);
-            i--;
-            bonus += 50;
-            collectSound.play();
-        }
+    if (state == 0) {
+      startScreen();
     }
 
-    for (var i = 0; i < Ramps.length; i++){
-        if(Ramps[i].checkHit()){
-            currentRamp = Ramps[i];
-        };
-    }
+    else if (state == 1) {
+      var scoreVar = document.getElementById("score");
+      var hitVar = document.getElementById("hits");
+      scoreVar.style.display = "block";
+      scoreVar.innerHTML = "Score: " + (score + bonus);
+      hitVar.style.display = "block";
+      hitVar.innerHTML = "Hits: " + hits;
 
-    for (var i = 0; i < Obstacles.length; i++){
-        if (Obstacles[i].checkHit()){
-            Obstacles.splice(i, 1);
-            i--;
-            hits++;
-        }
-    }
+      var pos = world.getUserPosition();
 
-    var xRotation = world.getUserRotation().y;
-    var xMove = xSpeed * xRotation;
+      for (var i = 0; i < coins.length; i++){
+          if(coins[i].checkHit()){
+              coins.splice(i, 1);
+              i--;
+              bonus += 50;
+              collectSound.play();
+          }
+      }
 
-    userX = pos.x - xMove;
-    xSpeed = zSpeed / 50;
+      for (var i = 0; i < Ramps.length; i++){
+          if(Ramps[i].checkHit()){
+              currentRamp = Ramps[i];
+          };
+      }
 
-	if ((p.userIsOnGround() || p.userIsOverGround()) && !fallen){
-        if (!rampHit && !obstacleHit){
-            if (zSpeed < 1.5) {
-              zSpeed += 0.001;
-            }
-            ySpeed = zSpeed * slope;
-            userY = pos.y - ySpeed;
+      for (var i = 0; i < Obstacles.length; i++){
+          if (Obstacles[i].checkHit()){
+              Obstacles.splice(i, 1);
+              i--;
+              hits++;
+          }
+      }
 
-            if(p.userIsAwayFromGround()){
-            	fallen = true;
-			      }
+      var xRotation = world.getUserRotation().y;
+      var xMove = xSpeed * xRotation;
 
-        }
+      userX = pos.x - xMove;
+      xSpeed = zSpeed / 50;
 
-        else if (!rampHit) {
-          console.log(justHit);
-          if (justHit) {
-            zSpeed *= 0.5;
-            angle = random(-.5,.5);
-            ySpeed = zSpeed * slope * random(.5, .75);
-            userY = pos.y - ySpeed;
-            justHit = false;
+  	if ((p.userIsOnGround() || p.userIsOverGround()) && !fallen){
+          if (!rampHit && !obstacleHit){
+              if (zSpeed < 1.5) {
+                zSpeed += 0.001;
+              }
+              ySpeed = zSpeed * slope;
+              userY = pos.y - ySpeed;
+
+              if(p.userIsAwayFromGround()){
+              	fallen = true;
+  			      }
+
           }
 
-          else {
-            xMove = zSpeed / 50 + angle;
-            userX = userX - xMove;
-            ySpeed = zSpeed * slope * -1 + fallSpeed;
-            fallSpeed += 0.01;
-            var currentGround = pos.z * slope + 0.5;
-            if (pos.y - ySpeed < currentGround){
-                userY = currentGround;
-                obstacleHit = false;
-                fallSpeed = 0;
+          else if (!rampHit) {
+            console.log(justHit);
+            if (justHit) {
+              zSpeed *= 0.5;
+              angle = random(-.5,.5);
+              ySpeed = zSpeed * slope * random(.5, .75);
+              userY = pos.y - ySpeed;
+              justHit = false;
             }
-            else{
-                userY = pos.y - ySpeed;
+
+            else {
+              xMove = zSpeed / 50 + angle;
+              userX = userX - xMove;
+              ySpeed = zSpeed * slope * -1 + fallSpeed;
+              fallSpeed += 0.01;
+              var currentGround = pos.z * slope + 0.5;
+              if (pos.y - ySpeed < currentGround){
+                  userY = currentGround;
+                  obstacleHit = false;
+                  fallSpeed = 0;
+              }
+              else{
+                  userY = pos.y - ySpeed;
+              }
             }
           }
-        }
 
-        else{
-            if(currentRamp.userIsOnGround()){
-                zSpeed -= 0.001;
-                ySpeed = zSpeed * slope * -1;
-                userY = pos.y - ySpeed;
-            }
+          else{
+              if(currentRamp.userIsOnGround()){
+                  zSpeed -= 0.001;
+                  ySpeed = zSpeed * slope * -1;
+                  userY = pos.y - ySpeed;
+              }
 
-            else{
-                ySpeed = zSpeed * slope * -1 + fallSpeed;
-                fallSpeed += 0.01;
-                var currentGround = pos.z * slope + 0.5;
-                if (pos.y - ySpeed < currentGround && !p.userIsAwayFromGround()){
-                    userY = currentGround;
-                    rampHit = false;
-                    fallSpeed = 0;
-                }
+              else{
+                  ySpeed = zSpeed * slope * -1 + fallSpeed;
+                  fallSpeed += 0.01;
+                  var currentGround = pos.z * slope + 0.5;
+                  if (pos.y - ySpeed < currentGround && !p.userIsAwayFromGround()){
+                      userY = currentGround;
+                      rampHit = false;
+                      fallSpeed = 0;
+                  }
 
-                else if (pos.y - ySpeed < currentGround && p.userIsAwayFromGround()){
-                	fallen = true;
-				}
+                  else if (pos.y - ySpeed < currentGround && p.userIsAwayFromGround()){
+                  	fallen = true;
+  				}
 
-                else{
-                    userY = pos.y - ySpeed;
-                }
-            }
-        }
-	}
+                  else{
+                      userY = pos.y - ySpeed;
+                  }
+              }
+          }
+  	}
 
-	else{
-		ySpeed += fallSpeed;
-		fallSpeed += 0.001;
-		userY = pos.y - ySpeed;
-	}
+  	else{
+  		ySpeed += fallSpeed;
+  		fallSpeed += 0.001;
+  		userY = pos.y - ySpeed;
+  	}
 
 
     userZ = pos.z - zSpeed ;
-    score = int(-userZ * 3);
+    score = int(-userZ * 3) + 149;
     world.setUserPosition(userX, userY, userZ);
     skySphereReference.elt.object3D.position.set(0, 0, userZ);
     p.plane.setHeight(p.plane.getHeight() + zSpeed * 2 * radicalThree);
@@ -173,6 +184,15 @@ function draw() {
         worldEnd *= 2;
         addObjects(worldEnd, temp, slope);
     }
+
+    if (hits >= 5 || fallen) {
+      state = 2;
+    }
+  }
+
+  else if (state == 2) {
+    gameOver();
+  }
 }
 
 function Coin(x, y, z){
@@ -343,7 +363,6 @@ function Obstacle(x, y, z, texture) {
     }
 }
 
-
 function addObjects(limit, start, tilt){
     var textures = ['iron', 'stone', 'gold'];
     // create lots of boxes
@@ -509,4 +528,60 @@ function AddSection(section) {
     // air.upperBound = nextGround.lowerBound;
 
     Ramps.push(test);
+}
+
+function startScreen() {
+  if (mouseIsPressed) {
+    console.log('hi');
+    state = 1;
+    document.getElementById("start").style.display = 'none';
+  }
+}
+
+function gameOver() {
+  var div = document.getElementById("gameOver");
+  div.style.display = 'block';
+  div.innerHTML = 'Game Over\nScore: ' + (score + bonus);
+
+  var scoreVar = document.getElementById("score");
+  var hitVar = document.getElementById("hits");
+  scoreVar.style.display = 'none';
+  hitVar.style.display = 'none';
+
+  if (mouseIsPressed) {
+    console.log('hi');
+    state = 0;
+    document.getElementById("start").style.display = 'block';
+    div.style.display = 'none';
+    userX = 0;
+    userY = 0.2;
+    userZ = 0;
+    xSpeed = 0.002;
+    zSpeed = 0.1;
+    ySpeed = zSpeed * slope;
+    sliding = false;
+    fallSpeed = 0.000001;
+    falling = false;
+    worldEnd = -1 * 125 * 1.73205080757;
+    coins = [];
+    Ramps = [];
+    Obstacles = [];
+    ground = [];
+    groundMap = [];
+    section = 0;
+    rampHit = false;
+    obstacleHit = false;
+    justHit = false;
+    score = 0;
+    bonus = 0;
+    hits = 0;
+    fallen = false;
+
+    world = new World('VRScene');
+
+    addObjects(worldEnd, 0, slope);
+    world.setUserPosition(0, 30, 50);
+    // AddSection(section);
+    p = new Ground(0, 0, 0, 100, 500, -120);
+  }
 }
